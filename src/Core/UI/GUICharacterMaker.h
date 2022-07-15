@@ -7,6 +7,7 @@ class GUICharacterMaker : public GUILayer
 {
 public:
     GUICharacterMaker();
+    ~GUICharacterMaker();
 
     void tick() override;
     void draw() const override;
