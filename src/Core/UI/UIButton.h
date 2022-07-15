@@ -4,8 +4,7 @@
 #include "Bounds.h"
 #include "Core/UI/UIComponent.h"
 
-class UIButton :
-    public UIComponent
+class UIButton : public UIComponent
 {
     typedef std::function<void(UIButton&, int)> ButtonCallback;
 
