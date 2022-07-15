@@ -47,15 +47,13 @@ void Framebuffer::bind()
 
     const glm::mat4 projection = glm::ortho(0.0f, float(resolution.x), float(resolution.y),
                                             0.0f, -1.0f, 1.0f);
-    o.spriteShader.use();
-    o.spriteShader.setMat4("projection", projection);
 
-    o.inkShader.use();
-    o.inkShader.setMat4("projection", projection);
-    o.inkShader.setInt("viewportHeight", resolution.y);
+    // TODO should probs loop thru all shaders
+    o.shaders["sprite"].use();
+    o.shaders["sprite"].setMat4("projection", projection);
 
-    o.glyphShader.use();
-    o.glyphShader.setMat4("projection", projection);
+    o.shaders["sprite"].use();
+    o.shaders["sprite"].setMat4("projection", projection);
 }
 
 void Framebuffer::bindTexture()

@@ -11,7 +11,6 @@
 #include "Util.h"
 #include "Core/jthread.h"
 #include "Core/LayerStack.h"
-#include "Core/PreInitialization.h"
 #include "Core/Registry.h"
 #include "Core/AudioManager.h"
 #include "Core/Rendering/FreeType.h"
@@ -24,12 +23,12 @@
 
 class MouseMovedEvent;
 class WindowCloseEvent;
+class MouseScrolledEvent;
 class Event;
 class Layer;
 
 class Outrospection
 {
-    PreInitialization preInit;
 
     OpenGL opengl; // defined at the beginning so nothing gets initialized before this
     FreeType freetype;
@@ -41,11 +40,8 @@ public:
         return *instance;
     }
 
-    Outrospection(bool speedrun = false);
+    Outrospection();
     ~Outrospection();
-
-    void setSpeedrun();
-    bool isSpeedrun() const;
 
     void stop();
 
@@ -59,10 +55,6 @@ public:
     void popOverlay(Layer* overlay);
 
     void captureMouse(bool doCapture);
-
-	// stores the letter and sets the mouse image
-    void setEye(Eye letter);
-    Eye getEye() const;
 
     void scheduleWorldTick(); // tick world NOW
 
@@ -84,19 +76,9 @@ public:
 	std::vector<Util::FutureRun> futureFunctions;
     std::unordered_map<char, FontCharacter> fontCharacters;
     
-    Shader screenShader;
-    Shader crtShader;
-    Shader spriteShader;
-    Shader inkShader;
-    Shader glyphShader;
+    std::unordered_map<std::string, Shader> shaders;
 
-    GUILayer* scene;
     GUILayer* background;
-    GUILayer* progressBarOverlay;
-    GUILayer* octopusOverlay;
-    GUILayer* controlsOverlay;
-    GUILayer* guideOverlay;
-    GUILayer* winOverlay;
 
     bool won = false;
 
@@ -111,12 +93,9 @@ private:
     // set to false when the game loop shouldn't run
     bool running = false;
 
-    // this being on makes it less "true to the game" but allows for cooler strats so I'm keeping it
-    bool speedrunMode = false;
-
     // timing
-    float deltaTime = 0; // Time between current frame and last frame
-    time_t lastFrame = 0; // Time of last frame
+    float deltaTime = 0;    // time between current frame and last frame
+    time_t lastFrame = 0;   // time of last frame
 
     GLFWwindow* gameWindow;
     bool isFullscreen = false;
@@ -131,8 +110,10 @@ private:
 
     bool onWindowClose(WindowCloseEvent& e);
     bool onMouseMoved(MouseMovedEvent& e);
-    void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    bool onMouseScrolled(MouseScrolledEvent& e);
+    bool onKeyPressed(KeyPressedEvent& e);
+    bool onKeyReleased(KeyReleasedEvent& e);
+
     static void error_callback(int errorcode, const char* description);
 	
     void registerCallbacks() const;
@@ -140,7 +121,6 @@ private:
     void createCursors();
     void createIcon() const;
 	
-    Eye eye = Eye::NONE;
     GLFWcursor *cursorNone{}, *cursorCircle{}, *cursorSquare{}, *cursorTriangle{};
 	
     void updateInput();

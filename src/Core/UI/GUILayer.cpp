@@ -53,8 +53,5 @@ bool GUILayer::onMousePressed(MouseButtonPressedEvent& event)
         }
     }
 
-    // TODO this should be elsewhere. where?
-    Outrospection::get().setEye(Eye::NONE);
-
     return false;
 }

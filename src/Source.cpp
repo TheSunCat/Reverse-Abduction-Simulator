@@ -45,22 +45,7 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    bool speedrun = false;
-
-    if(argc >= 2)
-    {
-        if(strcmp(argv[1], "--speedrun") == 0)
-        {
-            speedrun = true;
-        } else {
-            std::cout << "Unknown argument \"" << argv[1] << "\"! Options are:\n"
-                      << "--speedrun" << std::endl;
-            return -1;
-        }
-    }
-
-    auto outrospection = Outrospection(speedrun);
-
+    auto outrospection = Outrospection();
     
 
     // run the game!

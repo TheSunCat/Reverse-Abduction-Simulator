@@ -10,14 +10,8 @@
 #include "GLFW/glfw3.h"
 #include "Util.h"
 #include "Core/Layer.h"
-#include "Core/UI/GUIControlsOverlay.h"
 
 #include "Core/UI/GUILayer.h"
-#include "Core/UI/GUIOctopusOverlay.h"
-#include "Core/UI/GUIProgressBar.h"
-#include "Core/UI/GUIScene.h"
-#include "Core/UI/GUIGuide.h"
-#include "Core/UI/GUIWinOverlay.h"
 #include "Events/Event.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
@@ -25,17 +19,12 @@
 
 Outrospection* Outrospection::instance = nullptr;
 
-Outrospection::Outrospection(bool speedrun)
+Outrospection::Outrospection()
 {
     instance = this;
 
     loggerThread.start();
     // TODO consoleThread.start();
-
-    if(speedrun)
-        setSpeedrun();
-
-    preInit = PreInitialization();
     audioManager.init({ "Control_Select", "Eye_Poke_0", "Eye_Poke_1", "Eye_Poke_2", "Flag_Get", "Mic_Off", "Mic_On", "Movement", "totallyNotABossBattle", "Waffle_Get" });
 
     gameWindow = opengl.gameWindow;
@@ -53,19 +42,8 @@ Outrospection::Outrospection(bool speedrun)
     glfwSetCursor(gameWindow, cursorNone);
     
     background = new GUIBackground();
-    progressBarOverlay = new GUIProgressBar();
-    octopusOverlay = new GUIOctopusOverlay();
-    controlsOverlay = new GUIControlsOverlay();
-    guideOverlay = new GUIGuide();
-    winOverlay = new GUIWinOverlay();
-    scene = new GUIScene();
 
-    pushLayer(scene);
     pushOverlay(background);
-    pushOverlay(progressBarOverlay);
-    pushOverlay(octopusOverlay);
-    pushOverlay(guideOverlay);
-    pushOverlay(controlsOverlay);
 
     audioManager.play("totallyNotABossBattle", 1, true);
 
@@ -84,19 +62,7 @@ Outrospection::~Outrospection()
     //consoleThread.stop();
     loggerThread.stop();
 
-    std::cout << "Terminated the termination of the engine." << std::endl;
-}
-
-void Outrospection::setSpeedrun()
-{
-    speedrunMode = true;
-    
-    LOG_INFO("Speedrun mode enabled.");
-}
-
-bool Outrospection::isSpeedrun() const
-{
-    return speedrunMode;
+    std::cout << "Concluded the termination of the engine." << std::endl;
 }
 
 void Outrospection::stop()
@@ -124,13 +90,11 @@ void Outrospection::run()
             running = false;
 
 
-
         currentTimeMillis = Util::currentTimeMillis();
         time_t frameTime = currentTimeMillis - lastFrame;
 
         // sleep for any extra time we have
         auto extraTime = 16 - frameTime;
-        //LOG("%i", extraTime);
 
         if(extraTime > 0) {
             auto m = std::chrono::milliseconds(extraTime - 1);
@@ -142,9 +106,12 @@ void Outrospection::run()
 void Outrospection::onEvent(Event& e)
 {
     dispatchEvent<WindowCloseEvent>(e, BIND_EVENT_FUNC(Outrospection::onWindowClose));
-    //dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FUNC(Application::OnWindowResize));
+    //dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FUNC(Outrospection::onWindowResize));
     dispatchEvent<MouseMovedEvent>(e, BIND_EVENT_FUNC(Outrospection::onMouseMoved));
-    //dispatchEvent<MouseScrolledEvent>(e, BIND_EVENT_FUNC(Outrospection::onMouseScrolled));
+    dispatchEvent<MouseScrolledEvent>(e, BIND_EVENT_FUNC(Outrospection::onMouseScrolled));
+
+    dispatchEvent<KeyPressedEvent>(e, BIND_EVENT_FUNC(Outrospection::onKeyPressed));
+    dispatchEvent<KeyReleasedEvent>(e, BIND_EVENT_FUNC(Outrospection::onKeyReleased));
 
     for (auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
     {
@@ -180,7 +147,7 @@ void Outrospection::popOverlay(Layer* overlay)
 
 void Outrospection::captureMouse(const bool doCapture)
 {
-    if (false) { // TODO not hardcode this
+    if (doCapture) {
         glfwSetInputMode(gameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
     else
@@ -189,33 +156,6 @@ void Outrospection::captureMouse(const bool doCapture)
 
         //glfwSetCursorPos(gameWindow, SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f);
     }
-}
-
-void Outrospection::setEye(Eye letter)
-{
-    eye = letter;
-
-    switch(eye)
-    {
-    case Eye::NONE:
-        glfwSetCursor(gameWindow, cursorNone);
-        break;
-    case Eye::CIRCLE:
-        glfwSetCursor(gameWindow, cursorCircle);
-        break;
-    case Eye::SQUARE:
-        glfwSetCursor(gameWindow, cursorSquare);
-        break;
-    case Eye::TRIANGLE:
-        glfwSetCursor(gameWindow, cursorTriangle);
-        break;
-    }
-    
-}
-
-Eye Outrospection::getEye() const
-{
-    return eye;
 }
 
 void Outrospection::scheduleWorldTick()
@@ -295,21 +235,20 @@ void Outrospection::runGameLoop()
         framebuffers["crt"].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        if(!won)
-            scene->draw();
-
+        //if(!won)
+        //    scene->draw();
 
         framebuffers["default"].bind();
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw CRT with shader effect
-        crtShader.use();
+        shaders["crt"].use();
         
         glBindVertexArray(crtVAO);
         framebuffers["crt"].bindTexture();
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        screenShader.use();
+        shaders["screen"].use();
         // draw UI
         for (const auto& layer : layerStack)
         {
@@ -336,7 +275,7 @@ void Outrospection::runTick()
     
     lastTick = currentTimeMillis;
 
-    ((GUIScene*)scene)->worldTick();
+    //((GUIScene*)scene)->worldTick();
 }
 
 void Outrospection::registerCallbacks() const
@@ -414,7 +353,18 @@ void Outrospection::registerCallbacks() const
         Outrospection::get().onEvent(event);
     });
 
-    glfwSetKeyCallback(gameWindow, key_callback);
+    glfwSetKeyCallback(gameWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        if(action == GLFW_PRESS || action == GLFW_REPEAT)
+        {
+            KeyPressedEvent event(key, 0);
+            Outrospection::get().onEvent(event);
+        } else if (action == GLFW_RELEASE)
+        {
+            KeyReleasedEvent event(key);
+            Outrospection::get().onEvent(event);
+        }
+    });
     glfwSetErrorCallback(error_callback);
 }
 
@@ -422,11 +372,10 @@ void Outrospection::createShaders()
 {
     LOG_INFO("Setting up shaders...");
 
-    screenShader = Shader("screen", "screen");
-    crtShader    = Shader("crt"   , "crt"   );
-    spriteShader = Shader("sprite", "sprite");
-    inkShader    = Shader("sprite", "ink"   );
-    glyphShader  = Shader("sprite", "glyph" );
+    shaders.insert(std::make_pair("screen", Shader("screen", "screen")));
+    shaders.insert(std::make_pair("crt",    Shader("crt"   , "crt"   )));
+    shaders.insert(std::make_pair("sprite", Shader("sprite", "sprite")));
+    shaders.insert(std::make_pair("glyph",  Shader("sprite", "glyph" )));
 }
 
 void Outrospection::createCursors()
@@ -437,21 +386,6 @@ void Outrospection::createCursors()
     unsigned char* data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursorNone = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
-
-    data = TextureManager::readImageBytes("res/ObjectData/Textures/circleMouse.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
-    cursorCircle = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
-
-    data = TextureManager::readImageBytes("res/ObjectData/Textures/squareMouse.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
-    cursorSquare = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
-
-    data = TextureManager::readImageBytes("res/ObjectData/Textures/triangleMouse.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
-    cursorTriangle = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 }
 
@@ -487,7 +421,7 @@ glm::vec2 Outrospection::getWindowResolution() const
 
 void Outrospection::setWindowText(const std::string& text) const
 {
-    glfwSetWindowTitle(gameWindow, ("Octopuzzler | " + text).c_str());
+    glfwSetWindowTitle(gameWindow, ("Outrospection Engine | " + text).c_str());
 }
 
 bool Outrospection::onWindowClose(WindowCloseEvent& e)
@@ -519,30 +453,33 @@ bool Outrospection::onMouseMoved(MouseMovedEvent& e)
     return false;
 }
 
-void Outrospection::scroll_callback(GLFWwindow*, const double xoffset, const double yoffset)
+bool Outrospection::onMouseScrolled(MouseScrolledEvent& e)
 {
-    
+    return false;
 }
 
-// this function is called when you press a key
-void Outrospection::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+bool Outrospection::onKeyPressed(KeyPressedEvent& e)
 {
-    if(action == GLFW_PRESS)
-    {
-        LOG_INFO("pressed key %i", key);
+    LOG_INFO("pressed key %i", e.getKeyCode());
 
-        switch(key)
-        {
+    switch(e.getKeyCode())
+    {
 #ifdef _DEBUG
-        case GLFW_KEY_ESCAPE:
-            Outrospection::get().running = false;
-            break;
+    case GLFW_KEY_ESCAPE:
+        Outrospection::get().running = false;
+        return true;
 #endif
-        case GLFW_KEY_F11:
-            Outrospection::get().toggleFullscreen();
-            break;
-        }
+    case GLFW_KEY_F11:
+        Outrospection::get().toggleFullscreen();
+        return true;
     }
+
+    return false;
+}
+
+bool Outrospection::onKeyReleased(KeyReleasedEvent& e)
+{
+    return false;
 }
 
 void Outrospection::error_callback(const int errorcode, const char* description)
