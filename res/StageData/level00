@@ -1,9 +1,0 @@
-{
-	"level" : [
-		"WWWWWW",
-		"WS  GW",
-		"WWWWWW"],
-	"controls" : ")", 
-	"guideLeft" : "bind",
-	"guideRight" : "moving"
-}
