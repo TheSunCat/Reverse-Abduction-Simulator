@@ -1,0 +1,11 @@
+{
+	"level" : [
+		"WWWWWWW",
+		"WWWG WW",
+		"WWWW  W",
+		"WS  W W",
+		"WWW   W",
+		"WWWWWWW"],
+	"controls" : "*,()",
+	"guideRight" : "multibind"
+}
