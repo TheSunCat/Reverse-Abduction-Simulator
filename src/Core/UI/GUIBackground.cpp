@@ -2,7 +2,7 @@
 #include "Outrospection.h"
 
 GUIBackground::GUIBackground() : GUILayer("Background", false),
-                                background("overlay/background", GL_NEAREST, UITransform(0, 0, 1920, 1080)),
+                                background("Starry sky", animatedTexture({"ObjectData/UI/", "starrySky"}, 10, 2, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                                 globe("globe", GL_NEAREST, UITransform(960, 100, 880, 880))
 {
 
