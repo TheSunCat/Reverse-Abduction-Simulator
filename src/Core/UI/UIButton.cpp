@@ -46,7 +46,7 @@ void UIButton::tick()
         onHover(*this, 0);
     }
 
-    if (onUnhover && lastHovered && !hovered)
+    if(onUnhover && lastHovered && !hovered)
     {
         onUnhover(*this, 0);
     }

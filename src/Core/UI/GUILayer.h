@@ -23,7 +23,7 @@ public:
     virtual bool onMousePressed(MouseButtonPressedEvent& event);
 
 protected:
-    std::vector<std::unique_ptr<UIButton>> buttons;
+    std::vector<UIButton*> buttons;
     bool captureMouse = false;
 private:
     std::string name;

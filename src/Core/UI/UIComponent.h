@@ -46,7 +46,6 @@ class UIComponent
 {
 public:
     UIComponent(const std::string& _texName, const GLint& texFilter, const UITransform& transform);
-
     UIComponent(std::string _name, SimpleTexture& _tex, const UITransform& transform);
 
     virtual void draw(Shader& shader = Outrospection::get().shaders["sprite"], const Shader& glyphShader = Outrospection::get().shaders["glyph"]) const;
@@ -71,11 +70,10 @@ public:
 protected:
     UITransform transform;
 
+    static GLuint quadVAO;
 private:
     virtual void drawText(const std::string& text, const Shader& glyphShader) const;
 
     std::string curAnimation = "default";
     std::unordered_map<std::string, SimpleTexture*> animations;
-
-    static GLuint quadVAO;
 };

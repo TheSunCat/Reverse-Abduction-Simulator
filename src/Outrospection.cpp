@@ -5,6 +5,7 @@
 #include <chrono>
 #include <csignal>
 #include <Core/UI/GUIBackground.h>
+#include <Core/UI/GUICharacterMaker.h>
 #include <glm/ext/matrix_clip_space.hpp>
 
 #include "GLFW/glfw3.h"
@@ -39,13 +40,15 @@ Outrospection::Outrospection()
     createCursors();
     createIcon();
 
-    glfwSetCursor(gameWindow, cursorNone);
+    glfwSetCursor(gameWindow, gameCursor);
     
     background = new GUIBackground();
+    characterMaker = new GUICharacterMaker();
 
     pushOverlay(background);
+    pushOverlay(characterMaker);
 
-    audioManager.play("totallyNotABossBattle", 1, true);
+    //audioManager.play("totallyNotABossBattle", 1, true);
 
     // for good measure, redo UI here
     int width = 0, height = 0;
@@ -147,7 +150,7 @@ void Outrospection::popOverlay(Layer* overlay)
 
 void Outrospection::captureMouse(const bool doCapture)
 {
-    if (doCapture) {
+    if (false) { // TODO make this not hardcoded
         glfwSetInputMode(gameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
     else
@@ -385,7 +388,7 @@ void Outrospection::createCursors()
 
     unsigned char* data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
-    cursorNone = glfwCreateCursor(&cursorImage, 0, 0);
+    gameCursor = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 }
 

@@ -66,7 +66,7 @@ void UITransform::setSize(int x, int y)
 GLuint UIComponent::quadVAO = 0;
 
 UIComponent::UIComponent(const std::string& _texName, const GLint& texFilter, const UITransform& _transform)
-    : UIComponent(_texName, simpleTexture({"UI/", _texName}, texFilter), _transform)
+    : UIComponent(_texName, simpleTexture({"ObjectData/UI/", _texName}, texFilter), _transform)
 {
 }
 
