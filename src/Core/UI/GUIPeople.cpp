@@ -41,7 +41,6 @@ void GUIPeople::tick()
                 goal.y += r * sin(theta);
 
                 human.setGoal(goal.x, goal.y);
-
             }
         }
 

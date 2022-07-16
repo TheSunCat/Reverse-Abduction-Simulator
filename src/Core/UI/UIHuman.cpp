@@ -26,16 +26,19 @@ void UIHuman::draw(Shader& shader, const Shader&) const
 
     // TODO maybe we should cache this
     glm::mat4 model = glm::mat4(1.0f);
+
     model = glm::translate(model, glm::vec3(transform.getPos(), 0));
     model = glm::scale(model, glm::vec3(transform.getSize(), 0));
 
     shader.setMat4("model", model);
 
+
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(quadVAO);
 
-
     if(curAnimation == "default") {
+        shader.setBool("flip", m_goal.x > transform.getPos().x);
+
         for(int i = 0; i < m_layers.size(); i++)
         {
             SimpleTexture* layer = m_layers[i].operator[](m_curLayer[i]);
@@ -58,7 +61,7 @@ void UIHuman::draw(Shader& shader, const Shader&) const
 
 void UIHuman::tick()
 {
-    if(glm::length(m_goal) != 0 && transform.getPos() != m_goal) {
+    if(!isDead() && glm::length(m_goal) != 0 && transform.getPos() != m_goal) {
 
         transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
     }

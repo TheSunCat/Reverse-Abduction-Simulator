@@ -16,6 +16,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::HAT, "hat/0");
     m_human.addToLayer(HumanLayer::HAT, "hat/1");
     m_human.addToLayer(HumanLayer::HAT, "hat/2", true);
+    m_human.addToLayer(HumanLayer::HAT, "hat/3");
     m_human.addToLayer(HumanLayer::FACE, "face/0");
     m_human.addToLayer(HumanLayer::FACE, "face/1");
     m_human.addToLayer(HumanLayer::FACE, "face/2");

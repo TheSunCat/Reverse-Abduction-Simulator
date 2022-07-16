@@ -3,8 +3,13 @@ in vec2 texCoords;
 out vec4 color;
 
 uniform sampler2D image;
+uniform bool flip;
 
 void main()
-{    
-    color = texture(image, texCoords);
+{
+    vec2 coords = texCoords;
+    if(flip)
+        coords.x = 1 - coords.x;
+
+    color = texture(image, coords);
 }
