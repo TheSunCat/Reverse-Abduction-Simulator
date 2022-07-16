@@ -8,13 +8,19 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_ufoBeam.visible = false;
 
     m_human.addToLayer(HumanLayer::HAT, "hat/0");
+    m_human.addToLayer(HumanLayer::HAT, "hat/1");
     m_human.addToLayer(HumanLayer::FACE, "face/0");
     m_human.addToLayer(HumanLayer::FACE, "face/1");
     m_human.addToLayer(HumanLayer::FACE, "face/2");
     m_human.addToLayer(HumanLayer::FACE, "face/3");
     m_human.addToLayer(HumanLayer::TORSO, "torso/0");
+    m_human.addToLayer(HumanLayer::TORSO, "torso/1");
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
+    m_human.addToLayer(HumanLayer::HANDS, "hands/1");
     m_human.addToLayer(HumanLayer::LEGS, "legs/0");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/1");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/2");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/3");
 
     m_human.rollTheDice();
 
