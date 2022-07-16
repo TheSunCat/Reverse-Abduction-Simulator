@@ -30,7 +30,7 @@ Outrospection::Outrospection()
 
     loggerThread.start();
     // TODO consoleThread.start();
-    audioManager.init({ "Control_Select", "Eye_Poke_0", "Eye_Poke_1", "Eye_Poke_2", "Flag_Get", "Mic_Off", "Mic_On", "Movement", "totallyNotABossBattle", "Waffle_Get" });
+    audioManager.init({ "newsongfornewgame", "pageturn0", "pageturn1", "pageturn2", "pageturn3", "pageturn4" });
 
     gameWindow = opengl.gameWindow;
     crtVAO = opengl.crtVAO;
@@ -56,7 +56,7 @@ Outrospection::Outrospection()
     pushOverlay(layerPtrs["characterMaker"]);
     pushOverlay(layerPtrs["stats"]);
 
-    //audioManager.play("totallyNotABossBattle", 1, true);
+    audioManager.play("newsongfornewgame", 1, true);
 
     // for good measure, redo UI here
     int width = 0, height = 0;

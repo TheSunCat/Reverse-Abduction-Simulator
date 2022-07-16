@@ -7,6 +7,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
 {
     m_ufoBeam.visible = false;
 
+    m_human.addToLayer(HumanLayer::HAT, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HAT, "hat/0");
     m_human.addToLayer(HumanLayer::HAT, "hat/1");
     m_human.addToLayer(HumanLayer::FACE, "face/0");
@@ -15,6 +16,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::FACE, "face/3");
     m_human.addToLayer(HumanLayer::TORSO, "torso/0");
     m_human.addToLayer(HumanLayer::TORSO, "torso/1");
+    m_human.addToLayer(HumanLayer::HANDS, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
     m_human.addToLayer(HumanLayer::HANDS, "hands/1");
     m_human.addToLayer(HumanLayer::LEGS, "legs/0");
@@ -26,37 +28,47 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
 
     buttons.push_back(new UIButton("hatL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 100, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::HAT, -1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
     buttons.push_back(new UIButton("hatR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 100, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::HAT, 1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
 
     buttons.push_back(new UIButton("faceL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 250, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::FACE, -1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
     buttons.push_back(new UIButton("faceR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 250, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::FACE, 1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
 
     buttons.push_back(new UIButton("torsoL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 400, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::TORSO, -1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
     buttons.push_back(new UIButton("torsoR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 400, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::TORSO, 1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
 
     buttons.push_back(new UIButton("handsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 550, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::HANDS, -1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
     buttons.push_back(new UIButton("handsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 550, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::HANDS, 1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
 
     buttons.push_back(new UIButton("legsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 700, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::LEGS, -1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
     buttons.push_back(new UIButton("legsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 700, 82, 108), Bounds(), [&](UIButton&, int) -> void {
         m_human.changeLayer(HumanLayer::LEGS, 1);
+        Outrospection::get().audioManager.play("pageTurn" + std::to_string(int(rand() / float(RAND_MAX) * 4)));
     }));
 
     for(UIButton* button : buttons)
