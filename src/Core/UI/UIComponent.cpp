@@ -53,6 +53,11 @@ glm::vec2 UITransform::getSizeRatio() const
     return *Outrospection::get().curFbResolution / defaultRes;
 }
 
+void UITransform::setPos(glm::vec2 _pos)
+{
+    pos = _pos;
+}
+
 void UITransform::setPos(int x, int y)
 {
     pos = glm::vec2(x, y);

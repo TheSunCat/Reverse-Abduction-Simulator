@@ -16,18 +16,23 @@ class UIHuman : public UIComponent
 public:
     UIHuman(const UITransform& transform);
 
-    void draw(Shader& shader = Outrospection::get().shaders["sprite"], const Shader& = Outrospection::get().shaders["glyph"]) const;
+    void draw(Shader& shader = Outrospection::get().shaders["sprite"], const Shader& = Outrospection::get().shaders["glyph"]) const override;
+    void tick() override;
 
-    void setLayer(HumanLayer name, SimpleTexture* layer);
-    void addLayer(HumanLayer name, const std::string& layer);
+    void addToLayer(HumanLayer name, SimpleTexture* texture);
+    void addToLayer(HumanLayer name, const std::string& textureName);
+
+    void changeLayer(HumanLayer layer, int delta);
+
+    void rollTheDice();
+
+    void setGoal(int x, int y);
+    bool hasGoal();
+    void warpToGoal();
 
 private:
-    std::array<SimpleTexture*, 5> m_layers =
-    {
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr,
-    };
+    std::array<std::vector<SimpleTexture*>, 5> m_layers;
+    std::array<int, 5> m_curLayer = { 0, 0, 0, 0, 0 };
+
+    glm::vec2 m_goal = glm::vec2(0);
 };

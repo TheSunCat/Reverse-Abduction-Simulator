@@ -60,6 +60,7 @@ list(APPEND Outrospection_SOURCES
 	"src/Core/UI/GUIBackground.cpp"
 	"src/Core/UI/GUICharacterMaker.cpp"
 	"src/Core/UI/GUILayer.cpp"
+	"src/Core/UI/GUIPeople.cpp"
 	"src/Core/UI/GUIStats.cpp"
 	"src/Core/UI/UIButton.cpp"
 	"src/Core/UI/UIComponent.cpp"

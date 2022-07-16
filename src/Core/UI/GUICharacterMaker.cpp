@@ -1,48 +1,56 @@
 #include "GUICharacterMaker.h"
 
 #include "UIButton.h"
+#include "GUIPeople.h"
 
-GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UITransform(200, 100, 400, 880))
+GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UITransform(0, 0, 768, 1080)), m_ufoBeam("UFO beam", simpleTexture({"ObjectData/", "ufoBeam"}, GL_LINEAR), UITransform(1150, 140, 380, 380))
 {
-    m_human.addLayer(HumanLayer::HAT, "placeholderHat");
-    m_human.addLayer(HumanLayer::FACE, "placeholderFace");
-    m_human.addLayer(HumanLayer::TORSO, "placeholderTorso");
-    m_human.addLayer(HumanLayer::HANDS, "placeholderHands");
-    m_human.addLayer(HumanLayer::LEGS, "placeholderLegs");
+    m_ufoBeam.visible = false;
 
-    buttons.push_back(new UIButton("hatL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 100, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Left arrow pressed");
-    }));
-    buttons.push_back(new UIButton("hatR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 100, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Right arrow pressed");
-    }));
+    m_human.addToLayer(HumanLayer::HAT, "hat/0");
+    m_human.addToLayer(HumanLayer::FACE, "face/0");
+    m_human.addToLayer(HumanLayer::FACE, "face/1");
+    m_human.addToLayer(HumanLayer::FACE, "face/2");
+    m_human.addToLayer(HumanLayer::FACE, "face/3");
+    m_human.addToLayer(HumanLayer::TORSO, "torso/0");
+    m_human.addToLayer(HumanLayer::HANDS, "hands/0");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/0");
 
-    buttons.push_back(new UIButton("faceL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 250, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Left arrow pressed");
-    }));
-    buttons.push_back(new UIButton("faceR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 250, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Right arrow pressed");
-    }));
+    m_human.rollTheDice();
 
-    buttons.push_back(new UIButton("torsoL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 400, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Left arrow pressed");
+    buttons.push_back(new UIButton("hatL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 100, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::HAT, -1);
     }));
-    buttons.push_back(new UIButton("torsoR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 400, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Right arrow pressed");
+    buttons.push_back(new UIButton("hatR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 100, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::HAT, 1);
     }));
 
-    buttons.push_back(new UIButton("handsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 550, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Left arrow pressed");
+    buttons.push_back(new UIButton("faceL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 250, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::FACE, -1);
     }));
-    buttons.push_back(new UIButton("handsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 550, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Right arrow pressed");
+    buttons.push_back(new UIButton("faceR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 250, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::FACE, 1);
     }));
 
-    buttons.push_back(new UIButton("legsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 700, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Left arrow pressed");
+    buttons.push_back(new UIButton("torsoL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 400, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::TORSO, -1);
     }));
-    buttons.push_back(new UIButton("legsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 700, 82, 108), Bounds(), [](UIButton&, int) -> void {
-        LOG("Right arrow pressed");
+    buttons.push_back(new UIButton("torsoR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 400, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::TORSO, 1);
+    }));
+
+    buttons.push_back(new UIButton("handsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 550, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::HANDS, -1);
+    }));
+    buttons.push_back(new UIButton("handsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 550, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::HANDS, 1);
+    }));
+
+    buttons.push_back(new UIButton("legsL", simpleTexture({"ObjectData/UI/", "leftArrow"}, GL_LINEAR), UITransform(70, 700, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::LEGS, -1);
+    }));
+    buttons.push_back(new UIButton("legsR", simpleTexture({"ObjectData/UI/", "rightArrow"}, GL_LINEAR), UITransform(670, 700, 82, 108), Bounds(), [&](UIButton&, int) -> void {
+        m_human.changeLayer(HumanLayer::LEGS, 1);
     }));
 
     for(UIButton* button : buttons)
@@ -55,11 +63,24 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
         button->onHover = [](UIButton& button, int) { button.setAnimation("hovered"); };
         button->onUnhover = [](UIButton& button, int) { button.setAnimation("default"); };
     }
+
+    buttons.push_back(new UIButton("UFO", simpleTexture({"ObjectData/", "ufo"}, GL_LINEAR), UITransform(1050, 40, 260, 300), Bounds(UITransform(1100, 20, 300), BoundsShape::Circle), [&](UIButton&, int)
+    {
+        ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
+
+        m_ufoBeam.visible = true;
+
+        Util::doLater([&]() {m_ufoBeam.visible = false;}, 2000);
+
+        // reset human with new random stats (roll the dice)
+        m_human.rollTheDice();
+    }));
 }
 
 void GUICharacterMaker::tick()
 {
     m_human.tick();
+    m_ufoBeam.tick();
 
     for (UIButton* button : buttons)
     {
@@ -70,6 +91,7 @@ void GUICharacterMaker::tick()
 void GUICharacterMaker::draw() const
 {
     m_human.draw();
+    m_ufoBeam.draw();
 
     for (UIButton* button : buttons)
     {

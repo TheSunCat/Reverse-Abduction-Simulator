@@ -37,6 +37,7 @@ public:
     glm::vec2 getSize() const;
     glm::vec2 getSizeRatio() const;
 
+    void setPos(glm::vec2 _pos);
     void setPos(int x, int y);
     void setSize(int x, int y);
     UIAlign alignment;

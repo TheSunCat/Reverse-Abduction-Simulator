@@ -5,16 +5,14 @@ UIHuman::UIHuman(const UITransform& transform) : UIComponent("Human base", Textu
 
 }
 
-void UIHuman::setLayer(HumanLayer name, SimpleTexture* layer)
+void UIHuman::addToLayer(HumanLayer name, SimpleTexture* texture)
 {
-    m_layers[int(name)] = layer;
+    m_layers[int(name)].push_back(texture);
 }
 
-void UIHuman::addLayer(HumanLayer name, const std::string& layer)
+void UIHuman::addToLayer(HumanLayer name, const std::string& textureName)
 {
-    assert(m_layers[int(name)] == nullptr);
-
-    setLayer(name, &simpleTexture({"CostumeData/", layer}, GL_LINEAR));
+    addToLayer(name, &simpleTexture({"CostumeData/", textureName}, GL_LINEAR));
 }
 
 void UIHuman::draw(Shader& shader, const Shader&) const
@@ -35,8 +33,10 @@ void UIHuman::draw(Shader& shader, const Shader&) const
     glBindVertexArray(quadVAO);
 
 
-    for(SimpleTexture* layer : m_layers)
+    for(int i = 0; i < m_layers.size(); i++)
     {
+        SimpleTexture* layer = m_layers[i].operator[](m_curLayer[i]);
+
         if(!layer)
             continue;
 
@@ -48,3 +48,51 @@ void UIHuman::draw(Shader& shader, const Shader&) const
 
     glBindVertexArray(0);
 }
+
+void UIHuman::tick()
+{
+    if(glm::length(m_goal) != 0 && transform.getPos() != m_goal) {
+        //LOG("LERPING HUMAN");
+
+        transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
+    }
+}
+
+
+void UIHuman::changeLayer(HumanLayer layer, int delta)
+{
+    m_curLayer[int(layer)] += delta;
+
+    // wrap around
+    if(m_curLayer[int(layer)] < 0)
+        m_curLayer[int(layer)] = m_layers[int(layer)].size() - 1;
+
+    if(m_curLayer[int(layer)] >= m_layers[int(layer)].size())
+        m_curLayer[int(layer)] = 0;
+}
+
+void UIHuman::rollTheDice()
+{
+    for(int i = 0; i < m_layers.size(); i++) {
+        float random = rand() / float(RAND_MAX) * m_layers[i].size();
+
+        m_curLayer[i] = random;
+    }
+}
+
+
+void UIHuman::setGoal(int x, int y)
+{
+    m_goal = glm::vec2(x, y);
+}
+
+bool UIHuman::hasGoal()
+{
+    return (1 - abs(glm::dot(m_goal, transform.getPos()))) > 0.1;
+}
+
+void UIHuman::warpToGoal()
+{
+    transform.setPos(m_goal);
+}
+

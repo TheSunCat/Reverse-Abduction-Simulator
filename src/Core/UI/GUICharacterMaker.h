@@ -16,4 +16,6 @@ public:
 private:
 
     UIHuman m_human;
+
+    UIComponent m_ufoBeam;
 };

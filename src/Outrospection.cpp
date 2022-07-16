@@ -20,6 +20,7 @@
 #include <Core/UI/GUIBackground.h>
 #include <Core/UI/GUICharacterMaker.h>
 #include "Core/UI/GUIStats.h"
+#include "Core/UI/GUIPeople.h"
 
 Outrospection* Outrospection::instance = nullptr;
 
@@ -48,8 +49,10 @@ Outrospection::Outrospection()
     layerPtrs["background"] = new GUIBackground();
     layerPtrs["characterMaker"] = new GUICharacterMaker();
     layerPtrs["stats"] = new GUIStats();
+    layerPtrs["people"] = new GUIPeople();
 
     pushOverlay(layerPtrs["background"]);
+    pushOverlay(layerPtrs["people"]);
     pushOverlay(layerPtrs["characterMaker"]);
     pushOverlay(layerPtrs["stats"]);
 
