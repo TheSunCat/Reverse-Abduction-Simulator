@@ -1,6 +1,8 @@
 #include "GUIPostGame.h"
 
-GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false), m_backgroundFade("fade", simpleTexture({"ObjectData/UI/", "fadeColor"}, GL_NEAREST), UITransform(0, 0, 1920, 1080))
+GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
+                    m_backgroundFade("fade", simpleTexture({"ObjectData/UI/", "fadeColor"}, GL_NEAREST), UITransform(0, 0, 1920, 1080)),
+                    m_planetDown("planetDown", animatedTexture({"ObjectData/", "planetDown"}, 1, 10, GL_NEAREST), UITransform(910, 490, 100, 100))
 {
     m_backgroundFade.animationSpeed = 0.1;
 

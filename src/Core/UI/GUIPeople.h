@@ -18,6 +18,7 @@ public:
     int humanCount();
 
     void explodeAll();
+    void center();
 
     DISALLOW_COPY_AND_ASSIGN(GUIPeople);
 private:

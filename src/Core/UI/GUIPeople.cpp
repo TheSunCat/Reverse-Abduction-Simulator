@@ -117,3 +117,21 @@ void GUIPeople::explodeAll()
         }
     }
 }
+
+void GUIPeople::center()
+{
+    for(UIHuman& h : m_people) {
+        if(!h.isDead()) {
+            float r = 200 * sqrt(rand() / float(RAND_MAX));
+            float theta = (rand() / float(RAND_MAX)) * 2 * M_PI;
+
+            glm::vec2 goal(520 + 440 - 96, 20 + 440 - 135);
+            goal.x += r * cos(theta);
+            goal.y += r * sin(theta);
+
+            h.animationSpeed = 0.4;
+            h.setGoal(goal.x, goal.y);
+        }
+    }
+}
+

@@ -22,6 +22,8 @@ void AudioManager::init(const std::vector<std::string>& sounds)
                 0U, // aBufferSize
                 1U);// aChannels
 
+    engine.setGlobalVolume(0.5);
+
     for(const std::string& sound : sounds)
         loadSound(sound);
 }

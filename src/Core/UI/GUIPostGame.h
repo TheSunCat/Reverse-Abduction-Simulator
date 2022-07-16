@@ -18,4 +18,6 @@ public:
 
 private:
     UIComponent m_backgroundFade;
+
+    UIComponent m_planetDown;
 };

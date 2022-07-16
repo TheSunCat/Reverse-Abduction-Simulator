@@ -39,6 +39,8 @@ void GUIBackground::startEndSequence()
     globe.animationSpeed = 0.1;
     globe.setGoal(520, 20);
 
+    ((GUIPeople*)o.layerPtrs["people"])->center();
+
     Util::doLater([this]() {
         auto& o = Outrospection::get();
 

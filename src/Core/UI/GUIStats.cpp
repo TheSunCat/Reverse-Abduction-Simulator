@@ -30,7 +30,7 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
     m_planetCount.textColor = Color(0.9843, 0.9490, 0.8039);
 
 
-    m_timer.setDuration(5000);
+    m_timer.setDuration(150000);
     m_timer.start();
 }
 

@@ -59,7 +59,7 @@ public:
         int windowWidth = w / 2;
         int windowHeight = h / 2;
 
-        gameWindow = createGameWindow(windowWidth, windowHeight, "Octopuzzler", nullptr, nullptr);
+        gameWindow = createGameWindow(windowWidth, windowHeight, "Outrospection", nullptr, nullptr);
         glfwSetWindowPos(gameWindow, (w - windowWidth) / 2, (h - windowHeight) / 2);
 
         // load OGL function pointers
