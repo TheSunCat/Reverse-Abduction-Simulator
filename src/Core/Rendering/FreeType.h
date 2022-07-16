@@ -35,8 +35,8 @@ public:
         );
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         FontCharacter character = {
             texture,
@@ -68,14 +68,20 @@ public:
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
-        for (unsigned char c = 'a'; c < 'a' + 26; c++)
+        for (unsigned char c = 'a'; c < 'a' + 26; c++) // haha
             loadChar(face, c);
 
-        for (unsigned char c = '0'; c <= '9'; c++) // haha
+        for (unsigned char c = 'A'; c < 'A' + 26; c++)
+            loadChar(face, c);
+
+        for (unsigned char c = '0'; c <= '9'; c++)
             loadChar(face, c);
 
         loadChar(face, ' ');
+        loadChar(face, '.');
         loadChar(face, '/');
+        loadChar(face, ':');
+        loadChar(face, '-');
 
         // arrows
         loadChar(face, '*'); // up

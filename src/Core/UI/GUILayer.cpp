@@ -12,6 +12,12 @@ GUILayer::GUILayer(const std::string& _name, const bool _captureMouse) : Layer()
 {
 }
 
+GUILayer::~GUILayer()
+{
+
+}
+
+
 void GUILayer::onAttach()
 {
     Outrospection::get().captureMouse(captureMouse);

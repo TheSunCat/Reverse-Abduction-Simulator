@@ -166,7 +166,7 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
-    if (showText && !text.empty()) // TODO make a proper text class
+    if (textSize > 0 && !text.empty()) // TODO make a proper text class
     {
         drawText(text, glyphShader);
     }
@@ -175,11 +175,10 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
 void UIComponent::drawText(const std::string& text, const Shader& glyphShader) const
 {
     glyphShader.use();
-    glyphShader.setVec3("textColor", textColor); // TODO temp set color to black
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(quadVAO);
 
-    glm::vec2 textScale = transform.getSizeRatio() * 1.5f; // TODO sketchy scale?
+    glm::vec2 textScale = transform.getSizeRatio() * 1.5f * textSize; // TODO sketchy scale?
 
     glm::vec2 textPos = transform.getPos();
     textPos.y += (transform.getSize().y) / 2 + (10 * textScale.y);
@@ -187,11 +186,19 @@ void UIComponent::drawText(const std::string& text, const Shader& glyphShader) c
     // add an artificial space at the beginning
     textPos.x += textScale.x * 10;
 
+    glm::vec2 startPos = textPos;
+
     for (char c : text)
     {
         if (c <= '\0' || c == ' ')
         {
             textPos.x += textScale.x * 10;
+            continue;
+        }
+
+        if(c == '\n') {
+            startPos.y += transform.getSize().y / 2 * textSize;
+            textPos = startPos;
             continue;
         }
 
@@ -212,19 +219,30 @@ void UIComponent::drawText(const std::string& text, const Shader& glyphShader) c
         charPos.x += fontCharacter.bearing.x * textScale.x;
         charPos.y -= fontCharacter.bearing.y * textScale.y;
 
-        charModel = glm::translate(charModel, glm::vec3(charPos, 0.0f));
-
         glm::vec2 charSize = fontCharacter.size * textScale;
+
+
+        glBindTexture(GL_TEXTURE_2D, fontCharacter.textureId);
+
+        if(textShadow) {
+            charModel = glm::translate(charModel, glm::vec3(charPos, 0.0f));
+            charModel = glm::scale(charModel, glm::vec3(charSize, 1.0f));
+
+            glyphShader.setMat4("model", charModel);
+            glyphShader.setVec3("textColor", 0.765f * textColor);
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            charModel = glm::mat4(1.0f);
+        }
+
+        charPos.y -= (transform.getSize().y) / 16 * (textScale.y / 3.5f);
+
+        charModel = glm::translate(charModel, glm::vec3(charPos, 0.0f));
         charModel = glm::scale(charModel, glm::vec3(charSize, 1.0f));
 
-        // TODO not hardcode this lol
-        if (c == '$' || c == '%' || c == '&')
-            glyphShader.setVec3("textColor", glm::vec3(0.0549f, 0.0902f, 0.1725f)); //0x0E172C
-        else
-            glyphShader.setVec3("textColor", glm::vec3(0.8941f, 0.2039f, 0.4314f)); //0xE4346E
-
         glyphShader.setMat4("model", charModel);
-        glBindTexture(GL_TEXTURE_2D, fontCharacter.textureId);
+        glyphShader.setVec3("textColor", textColor);
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 

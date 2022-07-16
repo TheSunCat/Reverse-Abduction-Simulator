@@ -228,13 +228,13 @@ struct smart_printf {
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
     TypeName(const TypeName&) = delete;   \
-    TypeName& operator=(const TypeName&) = delete;
+    TypeName& operator=(const TypeName&) = delete
 
 #define DISALLOW_COPY(TypeName) \
-    TypeName(const TypeName&) = delete;
+    TypeName(const TypeName&) = delete
 
 #define DISALLOW_ASSIGN(TypeName) \
-    TypeName& operator=(const TypeName&) = delete;
+    TypeName& operator=(const TypeName&) = delete
 
 #define BIT(x) (1 << (x))
 

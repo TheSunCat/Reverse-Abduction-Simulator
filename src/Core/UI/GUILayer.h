@@ -12,6 +12,7 @@ class GUILayer : public Layer
 {
 public:
     explicit GUILayer(const std::string& _name, bool _captureMouse = true);
+    virtual ~GUILayer();
 
     void onAttach() override;
     void onDetach() override;

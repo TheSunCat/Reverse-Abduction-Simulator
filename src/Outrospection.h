@@ -82,14 +82,13 @@ public:
     
     std::unordered_map<std::string, Shader> shaders;
 
-    GUILayer* background;
-    GUILayer* characterMaker;
+    std::unordered_map<std::string, GUILayer*> layerPtrs;
 
     bool won = false;
 
     time_t currentTimeMillis = 0;
 	
-    DISALLOW_COPY_AND_ASSIGN(Outrospection)
+    DISALLOW_COPY_AND_ASSIGN(Outrospection);
 private:
     void runGameLoop();
     void runTick();

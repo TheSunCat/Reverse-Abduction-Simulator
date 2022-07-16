@@ -105,5 +105,5 @@ public:
     Framebuffer framebuffer;
     GLFWwindow* gameWindow{};
 
-    DISALLOW_COPY_AND_ASSIGN(OpenGL)
+    DISALLOW_COPY_AND_ASSIGN(OpenGL);
 };

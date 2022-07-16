@@ -52,8 +52,8 @@ void Framebuffer::bind()
     o.shaders["sprite"].use();
     o.shaders["sprite"].setMat4("projection", projection);
 
-    o.shaders["sprite"].use();
-    o.shaders["sprite"].setMat4("projection", projection);
+    o.shaders["glyph"].use();
+    o.shaders["glyph"].setMat4("projection", projection);
 }
 
 void Framebuffer::bindTexture()

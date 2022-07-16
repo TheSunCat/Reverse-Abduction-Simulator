@@ -27,5 +27,5 @@ public:
     glm::ivec2 defaultResolution = glm::ivec2(1920, 1080);
     glm::ivec2 resolution = glm::ivec2(1920, 1080);
 
-    //DISALLOW_COPY_AND_ASSIGN(Framebuffer)
+    //DISALLOW_COPY_AND_ASSIGN(Framebuffer);
 };

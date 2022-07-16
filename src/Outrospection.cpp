@@ -4,11 +4,10 @@
 #include <fstream>
 #include <chrono>
 #include <csignal>
-#include <Core/UI/GUIBackground.h>
-#include <Core/UI/GUICharacterMaker.h>
-#include <glm/ext/matrix_clip_space.hpp>
 
+#include <glm/ext/matrix_clip_space.hpp>
 #include "GLFW/glfw3.h"
+
 #include "Util.h"
 #include "Core/Layer.h"
 
@@ -17,6 +16,10 @@
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 #include "Events/WindowEvent.h"
+
+#include <Core/UI/GUIBackground.h>
+#include <Core/UI/GUICharacterMaker.h>
+#include "Core/UI/GUIStats.h"
 
 Outrospection* Outrospection::instance = nullptr;
 
@@ -42,11 +45,13 @@ Outrospection::Outrospection()
 
     glfwSetCursor(gameWindow, gameCursor);
     
-    background = new GUIBackground();
-    characterMaker = new GUICharacterMaker();
+    layerPtrs["background"] = new GUIBackground();
+    layerPtrs["characterMaker"] = new GUICharacterMaker();
+    layerPtrs["stats"] = new GUIStats();
 
-    pushOverlay(background);
-    pushOverlay(characterMaker);
+    pushOverlay(layerPtrs["background"]);
+    pushOverlay(layerPtrs["characterMaker"]);
+    pushOverlay(layerPtrs["stats"]);
 
     //audioManager.play("totallyNotABossBattle", 1, true);
 

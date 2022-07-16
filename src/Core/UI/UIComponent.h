@@ -61,8 +61,9 @@ public:
 
     std::string text;
 
-    bool showText = false;
+    float textSize = 0;
     Color textColor;
+    bool textShadow = false;
 
     bool visible = true;
 

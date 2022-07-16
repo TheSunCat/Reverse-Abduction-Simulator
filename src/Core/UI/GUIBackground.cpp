@@ -3,10 +3,17 @@
 
 GUIBackground::GUIBackground() : GUILayer("Background", false),
                                 background("Starry sky", animatedTexture({"ObjectData/UI/", "starrySky"}, 10, 2, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
-                                globe("globe", GL_NEAREST, UITransform(960, 100, 880, 880))
+                                globe("globe", GL_NEAREST, UITransform(1100, 20, 880, 880))
 {
 
 }
+
+GUIBackground::~GUIBackground()
+{
+
+}
+
+
 void GUIBackground::tick()
 {
     background.tick();
