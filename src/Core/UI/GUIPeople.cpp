@@ -2,6 +2,7 @@
 
 #include "UIHuman.h"
 #include "UIButton.h"
+#include "GUIStats.h"
 
 GUIPeople::GUIPeople() : GUILayer("People renderer", false)
 {
@@ -69,4 +70,10 @@ void GUIPeople::addHuman(UIHuman human)
 
     human.setGoal(1550, 520);
     m_people.emplace_back(human);
+
+    ((GUIStats*) Outrospection::get().layerPtrs["stats"])->setPeopleCount(m_people.size());
+
+    if(human.isBad()) {
+        LOG("BAD HUMAN!!!!");
+    }
 }

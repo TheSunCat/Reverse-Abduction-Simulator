@@ -5,14 +5,15 @@ UIHuman::UIHuman(const UITransform& transform) : UIComponent("Human base", Textu
 
 }
 
-void UIHuman::addToLayer(HumanLayer name, SimpleTexture* texture)
+void UIHuman::addToLayer(HumanLayer name, SimpleTexture* texture, bool bad)
 {
     m_layers[int(name)].push_back(texture);
+    m_layerBad[int(name)].push_back(bad);
 }
 
-void UIHuman::addToLayer(HumanLayer name, const std::string& textureName)
+void UIHuman::addToLayer(HumanLayer name, const std::string& textureName, bool bad)
 {
-    addToLayer(name, &simpleTexture({"CostumeData/", textureName}, GL_LINEAR));
+    addToLayer(name, &simpleTexture({"CostumeData/", textureName}, GL_LINEAR), bad);
 }
 
 void UIHuman::draw(Shader& shader, const Shader&) const
@@ -96,3 +97,12 @@ void UIHuman::warpToGoal()
     transform.setPos(m_goal);
 }
 
+bool UIHuman::isBad()
+{
+    for(int i = 0; i < m_layers.size(); i++) {
+        if(m_layerBad[i][m_curLayer[i]])
+            return true;
+    }
+
+    return false;
+}

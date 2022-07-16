@@ -13,16 +13,17 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::FACE, "face/0");
     m_human.addToLayer(HumanLayer::FACE, "face/1");
     m_human.addToLayer(HumanLayer::FACE, "face/2");
-    m_human.addToLayer(HumanLayer::FACE, "face/3");
+    m_human.addToLayer(HumanLayer::FACE, "face/3", true);
     m_human.addToLayer(HumanLayer::TORSO, "torso/0");
     m_human.addToLayer(HumanLayer::TORSO, "torso/1");
     m_human.addToLayer(HumanLayer::HANDS, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
-    m_human.addToLayer(HumanLayer::HANDS, "hands/1");
+    m_human.addToLayer(HumanLayer::HANDS, "hands/1", true);
     m_human.addToLayer(HumanLayer::LEGS, "legs/0");
-    m_human.addToLayer(HumanLayer::LEGS, "legs/1");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/1", true);
     m_human.addToLayer(HumanLayer::LEGS, "legs/2");
     m_human.addToLayer(HumanLayer::LEGS, "legs/3");
+    m_human.addToLayer(HumanLayer::LEGS, "legs/4");
 
     m_human.rollTheDice();
 
@@ -85,6 +86,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     buttons.push_back(new UIButton("UFO", simpleTexture({"ObjectData/", "ufo"}, GL_LINEAR), UITransform(1050, 40, 260, 300), Bounds(UITransform(1100, 20, 300), BoundsShape::Circle), [&](UIButton&, int)
     {
         ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
+        Outrospection::get().audioManager.play("reverseAbduction", 0.2);
 
         m_ufoBeam.visible = true;
 
