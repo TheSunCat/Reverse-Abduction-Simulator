@@ -42,18 +42,27 @@ void UIButton::tick()
         buttonBounds.transform.setPos(Util::lerp(buttonBounds.transform.getPos(), m_goal, 0.01));
     }
 
-    glm::vec2 mousePos = Outrospection::get().lastMousePos;
+    auto& o = Outrospection::get();
+
+    glm::vec2 mousePos = o.lastMousePos;
 
     bool lastHovered = hovered;
     hovered = isOnButton(mousePos);
 
-    if(onHover && !lastHovered && hovered)
+    if(!lastHovered && hovered)
     {
-        onHover(*this, 0);
+        if(onClick)
+            o.setCursor("hovering");
+
+        if(onHover)
+            onHover(*this, 0);
     }
 
-    if(onUnhover && lastHovered && !hovered)
+    if(lastHovered && !hovered)
     {
-        onUnhover(*this, 0);
+        o.setCursor("default");
+
+        if(onUnhover)
+            onUnhover(*this, 0);
     }
 }

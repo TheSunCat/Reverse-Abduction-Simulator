@@ -69,6 +69,7 @@ public:
     glm::vec2 getWindowResolution() const;
 
     void setWindowText(const std::string& text) const;
+    void setCursor(const std::string& cursorName);
 
     glm::ivec2* curFbResolution = &curWindowResolution;
 
@@ -79,7 +80,7 @@ public:
 
 	std::vector<Util::FutureRun> futureFunctions;
     std::unordered_map<char, FontCharacter> fontCharacters;
-    
+
     std::unordered_map<std::string, Shader> shaders;
 
     std::unordered_map<std::string, GUILayer*> layerPtrs;
@@ -87,7 +88,7 @@ public:
     bool won = false;
 
     time_t currentTimeMillis = 0;
-	
+
     DISALLOW_COPY_AND_ASSIGN(Outrospection);
 private:
     void runGameLoop();
@@ -119,13 +120,14 @@ private:
     bool onKeyReleased(KeyReleasedEvent& e);
 
     static void error_callback(int errorcode, const char* description);
-	
+
+
     void registerCallbacks() const;
     void createShaders();
     void createCursors();
     void createIcon() const;
 	
-    GLFWcursor *gameCursor{};
+    std::unordered_map<std::string, GLFWcursor*> cursors;
 	
     void updateInput();
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bits/types/time_t.h>
+#include <ctime>
 
 class Timer
 {

@@ -44,7 +44,7 @@ Outrospection::Outrospection()
     createCursors();
     createIcon();
 
-    glfwSetCursor(gameWindow, gameCursor);
+    setCursor("default");
     
     layerPtrs["background"] = new GUIBackground();
     layerPtrs["characterMaker"] = new GUICharacterMaker();
@@ -396,7 +396,17 @@ void Outrospection::createCursors()
 
     unsigned char* data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
-    gameCursor = glfwCreateCursor(&cursorImage, 0, 0);
+    cursors["default"] = glfwCreateCursor(&cursorImage, 0, 0);
+    TextureManager::free(data);
+
+    data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse_hover.png", width, height);
+    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
+    cursors["hovering"] = glfwCreateCursor(&cursorImage, 0, 0);
+    TextureManager::free(data);
+
+    data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse_click.png", width, height);
+    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
+    cursors["clicking"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 }
 
@@ -433,6 +443,11 @@ glm::vec2 Outrospection::getWindowResolution() const
 void Outrospection::setWindowText(const std::string& text) const
 {
     glfwSetWindowTitle(gameWindow, ("Outrospection Engine | " + text).c_str());
+}
+
+void Outrospection::setCursor(const std::string& cursorName)
+{
+    glfwSetCursor(gameWindow, cursors[cursorName]);
 }
 
 bool Outrospection::onWindowClose(WindowCloseEvent& e)
