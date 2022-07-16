@@ -137,7 +137,7 @@ bool UIHuman::isBad()
 
 bool UIHuman::isDead()
 {
-   return curAnimation == "dead";
+   return (curAnimation == "dead") || (curAnimation == "exploding");
 }
 
 void UIHuman::markForDeletion()

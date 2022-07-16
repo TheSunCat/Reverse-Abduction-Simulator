@@ -99,6 +99,5 @@ void GUIPeople::addHuman(UIHuman human)
 
         // delete bad human
         m_people[newHumanIndex].markForDeletion();
-
     }
 }

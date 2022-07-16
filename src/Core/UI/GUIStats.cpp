@@ -7,8 +7,10 @@
 GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", TextureManager::None, UITransform(1370, 940, 100, 100)),
                         m_bossIsBack("Boss is\nback in...", TextureManager::None, UITransform(1080, 900, 100, 100)),
                         m_timerBlurTop("timerBlurTop", simpleTexture({"ObjectData/UI/", "timerTextBlurTop"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
-                        m_peopleCount("x 0", TextureManager::None, UITransform(920, 550, 100, 100)),
-                        m_peopleIcon("peopleIcon", simpleTexture({"ObjectData/", "person"}, GL_LINEAR), UITransform(850, 550, 66, 80))
+                        m_peopleCount("x 0", TextureManager::None, UITransform(1010, 800, 100, 100)),
+                        m_peopleIcon("peopleIcon", simpleTexture({"ObjectData/", "person"}, GL_LINEAR), UITransform(930, 800, 66, 80)),
+                        m_planetCount("x 1", TextureManager::None, UITransform(1010, 650, 100, 100)),
+                        m_planetIcon("planetIcon", simpleTexture({"ObjectData/", "planet"}, GL_LINEAR), UITransform(910, 650, 100, 100))
 {
     m_timerDisplay.textShadow = true;
     m_timerDisplay.textSize = 3.5;
@@ -21,8 +23,12 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
     m_peopleCount.textSize = 1.5;
     m_peopleCount.textColor = Color(0.9843, 0.9490, 0.8039);
 
+    m_planetCount.textSize = 1.5;
+    m_planetCount.textColor = Color(0.9843, 0.9490, 0.8039);
 
-    m_timer.setDuration(70000);
+
+    m_timer.setDuration(150000);
+    m_timer.start();
 }
 
 GUIStats::~GUIStats()
@@ -54,6 +60,8 @@ void GUIStats::tick()
     m_timerDisplay.tick();
     m_peopleCount.tick();
     m_peopleIcon.tick();
+    m_planetCount.tick();
+    m_planetIcon.tick();
 
     using namespace std;
     stringstream ss;
@@ -69,4 +77,6 @@ void GUIStats::draw() const
     m_bossIsBack.draw();
     m_peopleCount.draw();
     m_peopleIcon.draw();
+    m_planetCount.draw();
+    m_planetIcon.draw();
 }

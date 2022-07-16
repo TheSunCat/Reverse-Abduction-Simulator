@@ -27,4 +27,7 @@ private:
 
     UIComponent m_peopleCount;
     UIComponent m_peopleIcon;
+
+    UIComponent m_planetCount;
+    UIComponent m_planetIcon;
 };
