@@ -3,6 +3,8 @@
 #include "GUILayer.h"
 #include "UIHuman.h"
 
+#include <Timer.h>
+
 class GUICharacterMaker : public GUILayer
 {
 public:
@@ -18,4 +20,6 @@ private:
     UIHuman m_human;
 
     UIComponent m_ufoBeam;
+
+    Timer m_beamTimer;
 };

@@ -18,6 +18,7 @@ void Timer::pause()
 
 void Timer::start()
 {
+    m_ended = false;
     m_paused = false;
     m_endTime = Util::currentTimeMillis() + m_timeLeft;
     m_currentTime = Util::currentTimeMillis();
@@ -43,6 +44,8 @@ void Timer::tick()
     {
         m_timeLeft = 0;
         pause();
+
+        m_ended = true;
     }
 
     m_currentTime = curTime;
@@ -56,4 +59,9 @@ int Timer::getSeconds()
 int Timer::getMinutes()
 {
     return m_timeLeft / 60000.f;
+}
+
+bool Timer::ended()
+{
+    return m_ended;
 }

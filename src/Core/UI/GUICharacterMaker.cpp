@@ -90,7 +90,8 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
 
         m_ufoBeam.visible = true;
 
-        Util::doLater([&]() {m_ufoBeam.visible = false;}, 2000);
+        m_beamTimer.setDuration(2000);
+        m_beamTimer.start();
 
         // reset human with new random stats (roll the dice)
         m_human.rollTheDice();
@@ -106,6 +107,11 @@ void GUICharacterMaker::tick()
     {
         button->tick();
     }
+
+    m_beamTimer.tick();
+    if(m_beamTimer.ended())
+        m_ufoBeam.visible = false;
+
 }
 
 void GUICharacterMaker::draw() const

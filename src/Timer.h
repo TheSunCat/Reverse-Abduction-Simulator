@@ -4,6 +4,8 @@
 
 class Timer
 {
+    bool m_ended = false;
+
     bool m_paused = true;
 
     time_t m_endTime;
@@ -22,4 +24,6 @@ public:
 
     int getSeconds();
     int getMinutes();
+
+    bool ended();
 };
