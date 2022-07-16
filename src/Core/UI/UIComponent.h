@@ -60,6 +60,10 @@ public:
     void setScale(int px);
     void setScale(int x, int y);
 
+    void setGoal(int x, int y);
+    bool hasGoal();
+    void warpToGoal();
+
     std::string text;
 
     float textSize = 0;
@@ -78,4 +82,6 @@ protected:
 
     std::string curAnimation = "default";
     std::unordered_map<std::string, SimpleTexture*> animations;
+
+    glm::vec2 m_goal = glm::vec2(0);
 };

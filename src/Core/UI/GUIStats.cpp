@@ -3,6 +3,9 @@
 #include <sstream>
 
 #include "UIButton.h"
+#include "GUIPeople.h"
+#include "GUICharacterMaker.h"
+#include "GUIBackground.h"
 
 GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", TextureManager::None, UITransform(1370, 940, 100, 100)),
                         m_bossIsBack("Boss is\nback in...", TextureManager::None, UITransform(1080, 900, 100, 100)),
@@ -27,7 +30,7 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
     m_planetCount.textColor = Color(0.9843, 0.9490, 0.8039);
 
 
-    m_timer.setDuration(150000);
+    m_timer.setDuration(5000);
     m_timer.start();
 }
 
@@ -68,6 +71,36 @@ void GUIStats::tick()
     ss << setfill('0') << setw(2) << m_timer.getMinutes() << ":" << setw(2) << m_timer.getSeconds();
 
     m_timerDisplay.text = ss.str();
+
+    if(m_timer.ended()) {
+        m_timer.start();
+        m_timer.pause();
+
+        auto& o = Outrospection::get();
+        ((GUICharacterMaker*)o.layerPtrs["characterMaker"])->moveOutOfTheWay();
+
+        Util::doLater([this] () {
+            auto& o = Outrospection::get();
+            //o.popOverlay(o.layerPtrs["stats"]);
+
+            //((GUIBackground*)o.layerPtrs["background"])->centerGlobe();
+            m_timerBlurTop.setGoal(1700, 5000);
+            m_timerDisplay.setGoal(1700, 5000);
+            m_bossIsBack.setGoal(1700, 5000);
+            m_peopleCount.setGoal(1700, 5000);
+            m_peopleIcon.setGoal(1700, 5000);
+            m_planetCount.setGoal(1700, 5000);
+            m_planetIcon.setGoal(1700, 5000);
+
+
+            if(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50)
+            {
+                LOG("Won! :D");
+            } else {
+                LOG("Lost! D:");
+            }
+        }, 2000);
+    }
 }
 
 void GUIStats::draw() const

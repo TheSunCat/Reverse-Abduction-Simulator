@@ -51,7 +51,7 @@ bool GUILayer::onMousePressed(MouseButtonPressedEvent& event)
 {
     for (auto& button : buttons)
     {
-        if (button->hovered)
+        if (button->hovered && button->onClick)
         {
             button->onClick(*button, event.getMouseButton()); // TODO feed mouse coords maybe
 

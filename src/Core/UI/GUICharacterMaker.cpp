@@ -134,6 +134,22 @@ void GUICharacterMaker::draw() const
     }
 }
 
+void GUICharacterMaker::moveOutOfTheWay()
+{
+    m_human.setGoal(-5000, 0);
+    for (UIButton* button : buttons)
+    {
+        if(button->text != "UFO")
+            button->setGoal(-5000, 0);
+        else
+        {
+            button->setGoal(650, 40);
+        }
+
+        button->onClick = nullptr;
+    }
+}
+
 GUICharacterMaker::~GUICharacterMaker()
 {
     for (UIButton* button : buttons)

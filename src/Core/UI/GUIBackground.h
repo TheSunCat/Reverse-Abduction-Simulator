@@ -13,6 +13,8 @@ public:
 
     void draw() const override;
 
+    void centerGlobe();
+
     DISALLOW_COPY_AND_ASSIGN(GUIBackground);
 private:
     UIComponent background;

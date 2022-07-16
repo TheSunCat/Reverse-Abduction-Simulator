@@ -27,10 +27,6 @@ public:
 
     void rollTheDice();
 
-    void setGoal(int x, int y);
-    bool hasGoal();
-    void warpToGoal();
-
     bool isBad();
     bool isDead();
 
@@ -40,8 +36,6 @@ private:
     std::array<std::vector<SimpleTexture*>, 5> m_layers;
     std::array<int, 5> m_curLayer = { 0, 0, 0, 0, 0 };
     std::array<std::vector<bool>, 5> m_layerBad;
-
-    glm::vec2 m_goal = glm::vec2(0);
 
     Timer m_deletionTimer, m_obliterationTimer;
 };

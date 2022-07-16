@@ -36,6 +36,12 @@ bool UIButton::isOnButton(const glm::vec2& point) const
 
 void UIButton::tick()
 {
+    if(glm::length(m_goal) != 0 && transform.getPos() != m_goal)
+    {
+        transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
+        buttonBounds.transform.setPos(Util::lerp(buttonBounds.transform.getPos(), m_goal, 0.01));
+    }
+
     glm::vec2 mousePos = Outrospection::get().lastMousePos;
 
     bool lastHovered = hovered;

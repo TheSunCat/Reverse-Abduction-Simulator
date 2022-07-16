@@ -25,3 +25,10 @@ void GUIBackground::draw() const
     background.draw();
     globe.draw();
 }
+
+void GUIBackground::centerGlobe()
+{
+    globe.setGoal(520, 20);
+    //globe.warpToGoal();
+}
+

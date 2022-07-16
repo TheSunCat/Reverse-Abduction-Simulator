@@ -14,6 +14,8 @@ public:
     void tick() override;
     void draw() const override;
 
+    void moveOutOfTheWay();
+
     DISALLOW_COPY_AND_ASSIGN(GUICharacterMaker);
 private:
 

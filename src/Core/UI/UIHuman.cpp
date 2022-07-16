@@ -56,6 +56,8 @@ void UIHuman::draw(Shader& shader, const Shader&) const
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
+    shader.setBool("flip", false);
+
     glBindVertexArray(0);
 }
 
@@ -110,22 +112,6 @@ void UIHuman::rollTheDice()
 
         m_curLayer[i] = random;
     }
-}
-
-
-void UIHuman::setGoal(int x, int y)
-{
-    m_goal = glm::vec2(x, y);
-}
-
-bool UIHuman::hasGoal()
-{
-    return (1 - abs(glm::dot(m_goal, transform.getPos()))) > 0.1;
-}
-
-void UIHuman::warpToGoal()
-{
-    transform.setPos(m_goal);
 }
 
 bool UIHuman::isBad()

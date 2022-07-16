@@ -111,6 +111,10 @@ UIComponent::UIComponent(std::string _name, SimpleTexture& _tex, const UITransfo
 
 void UIComponent::tick()
 {
+    if(glm::length(m_goal) != 0 && transform.getPos() != m_goal)
+    {
+        transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
+    }
 }
 
 void UIComponent::addAnimation(const std::string& anim, SimpleTexture& _tex)
@@ -255,4 +259,19 @@ void UIComponent::drawText(const std::string& text, const Shader& glyphShader) c
     }
 
     glBindVertexArray(0);
+}
+
+void UIComponent::setGoal(int x, int y)
+{
+    m_goal = glm::vec2(x, y);
+}
+
+bool UIComponent::hasGoal()
+{
+    return (1 - abs(glm::dot(m_goal, transform.getPos()))) > 0.1;
+}
+
+void UIComponent::warpToGoal()
+{
+    transform.setPos(m_goal);
 }

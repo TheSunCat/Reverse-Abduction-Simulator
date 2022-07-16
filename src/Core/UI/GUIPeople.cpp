@@ -47,14 +47,9 @@ void GUIPeople::tick()
         human.tick();
     }
 
-    // update stats
-    int peopleCount = 0;
-    for(UIHuman& h : m_people) {
-        if(!h.isDead())
-            peopleCount++;
-    }
 
-    ((GUIStats*) Outrospection::get().layerPtrs["stats"])->setPeopleCount(peopleCount);
+
+    ((GUIStats*) Outrospection::get().layerPtrs["stats"])->setPeopleCount(humanCount());
 }
 
 void GUIPeople::draw() const
@@ -100,3 +95,17 @@ void GUIPeople::addHuman(UIHuman human)
         m_people[newHumanIndex].markForDeletion();
     }
 }
+
+int GUIPeople::humanCount()
+{
+    // update stats
+    int humanCount = 0;
+    for(UIHuman& h : m_people) {
+        if(!h.isDead()) {
+            humanCount++;
+        }
+    }
+
+    return humanCount;
+}
+

@@ -15,6 +15,7 @@ public:
     void draw() const override;
 
     void addHuman(UIHuman human);
+    int humanCount();
 
     DISALLOW_COPY_AND_ASSIGN(GUIPeople);
 private:
