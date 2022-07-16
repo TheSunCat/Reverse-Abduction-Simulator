@@ -73,7 +73,7 @@ protected:
     UITransform transform;
 
     static GLuint quadVAO;
-private:
+
     virtual void drawText(const std::string& text, const Shader& glyphShader) const;
 
     std::string curAnimation = "default";

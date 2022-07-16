@@ -7,6 +7,9 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
 {
     m_ufoBeam.visible = false;
 
+    m_human.addAnimation("exploding", animatedTexture({"ObjectData/", "explosion"}, 2, 8, GL_NEAREST));
+    m_human.addAnimation("dead", TextureManager::None);
+
     m_human.addToLayer(HumanLayer::HAT, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HAT, "hat/0");
     m_human.addToLayer(HumanLayer::HAT, "hat/1");

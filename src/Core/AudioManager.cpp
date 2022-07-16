@@ -46,7 +46,6 @@ void AudioManager::play(const std::string& soundName, float vol, bool loop)
     
     wave->setLooping(loop);
 
-    LOG("Playing sound %s", soundName);
     handles.insert_or_assign(soundName, engine.play(*wave, vol));
 }
 

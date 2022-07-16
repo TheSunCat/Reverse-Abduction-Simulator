@@ -34,16 +34,21 @@ void UIHuman::draw(Shader& shader, const Shader&) const
     glBindVertexArray(quadVAO);
 
 
-    for(int i = 0; i < m_layers.size(); i++)
-    {
-        SimpleTexture* layer = m_layers[i].operator[](m_curLayer[i]);
+    if(curAnimation == "default") {
+        for(int i = 0; i < m_layers.size(); i++)
+        {
+            SimpleTexture* layer = m_layers[i].operator[](m_curLayer[i]);
 
-        if(!layer)
-            continue;
+            if(!layer)
+                continue;
 
-        LOG_DEBUG("Drawing layer %s", layer.c_str());
-        layer->bind();
+            LOG_DEBUG("Drawing layer %s", layer.c_str());
+            layer->bind();
 
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+    } else {
+        animations.at(curAnimation)->bind();
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
