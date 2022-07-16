@@ -109,3 +109,11 @@ int GUIPeople::humanCount()
     return humanCount;
 }
 
+void GUIPeople::explodeAll()
+{
+    for(UIHuman& h : m_people) {
+        if(!h.isDead()) {
+            h.explode(true); // explode silently to avoid cacophony
+        }
+    }
+}

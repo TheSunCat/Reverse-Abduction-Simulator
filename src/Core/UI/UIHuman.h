@@ -31,6 +31,7 @@ public:
     bool isDead();
 
     void markForDeletion();
+    void explode(bool silent = false);
 
 private:
     std::array<std::vector<SimpleTexture*>, 5> m_layers;

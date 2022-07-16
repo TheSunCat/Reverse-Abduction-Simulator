@@ -79,18 +79,16 @@ void GUIStats::tick()
         auto& o = Outrospection::get();
         ((GUICharacterMaker*)o.layerPtrs["characterMaker"])->moveOutOfTheWay();
 
-        Util::doLater([this] () {
+        Util::doLater([] () {
             auto& o = Outrospection::get();
-            //o.popOverlay(o.layerPtrs["stats"]);
 
-            //((GUIBackground*)o.layerPtrs["background"])->centerGlobe();
-            m_timerBlurTop.setGoal(1700, 5000);
+            /*m_timerBlurTop.setGoal(1700, 5000);
             m_timerDisplay.setGoal(1700, 5000);
             m_bossIsBack.setGoal(1700, 5000);
             m_peopleCount.setGoal(1700, 5000);
             m_peopleIcon.setGoal(1700, 5000);
             m_planetCount.setGoal(1700, 5000);
-            m_planetIcon.setGoal(1700, 5000);
+            m_planetIcon.setGoal(1700, 5000);*/
 
 
             if(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50)
@@ -98,6 +96,11 @@ void GUIStats::tick()
                 LOG("Won! :D");
             } else {
                 LOG("Lost! D:");
+                Util::doLater([]() {
+                    // TODO start cutscene before this
+
+                    ((GUIBackground*)Outrospection::get().layerPtrs["background"])->startEndSequence();
+                }, 2000);
             }
         }, 2000);
     }

@@ -17,6 +17,8 @@ public:
     void addHuman(UIHuman human);
     int humanCount();
 
+    void explodeAll();
+
     DISALLOW_COPY_AND_ASSIGN(GUIPeople);
 private:
     std::vector<UIHuman> m_people;

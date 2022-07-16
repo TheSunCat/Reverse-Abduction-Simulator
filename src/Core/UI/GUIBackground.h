@@ -13,7 +13,7 @@ public:
 
     void draw() const override;
 
-    void centerGlobe();
+    void startEndSequence();
 
     DISALLOW_COPY_AND_ASSIGN(GUIBackground);
 private:

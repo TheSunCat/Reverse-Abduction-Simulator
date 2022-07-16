@@ -21,12 +21,16 @@
 #include <Core/UI/GUICharacterMaker.h>
 #include "Core/UI/GUIStats.h"
 #include "Core/UI/GUIPeople.h"
+#include "Core/UI/GUIPostGame.h"
 
 Outrospection* Outrospection::instance = nullptr;
 
 Outrospection::Outrospection()
 {
     instance = this;
+
+    // seed rand()
+    srand(time(NULL));
 
     loggerThread.start();
     // TODO consoleThread.start();
@@ -50,6 +54,7 @@ Outrospection::Outrospection()
     layerPtrs["characterMaker"] = new GUICharacterMaker();
     layerPtrs["stats"] = new GUIStats();
     layerPtrs["people"] = new GUIPeople();
+    layerPtrs["postGame"] = new GUIPostGame();
 
     pushOverlay(layerPtrs["background"]);
     pushOverlay(layerPtrs["people"]);

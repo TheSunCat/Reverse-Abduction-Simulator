@@ -113,8 +113,10 @@ void UIComponent::tick()
 {
     if(glm::length(m_goal) != 0 && transform.getPos() != m_goal)
     {
-        transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
+        transform.setPos(Util::lerp(transform.getPos(), m_goal, animationSpeed));
     }
+
+    opacity = Util::lerp(opacity, opacityGoal, animationSpeed);
 }
 
 void UIComponent::addAnimation(const std::string& anim, SimpleTexture& _tex)
@@ -167,6 +169,8 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
     model = glm::scale(model, glm::vec3(transform.getSize(), 0));
 
     shader.setMat4("model", model);
+
+    shader.setFloat("opacity", opacity);
 
     glActiveTexture(GL_TEXTURE0);
     animations.at(curAnimation)->bind();
@@ -274,4 +278,5 @@ bool UIComponent::hasGoal()
 void UIComponent::warpToGoal()
 {
     transform.setPos(m_goal);
+    opacity = opacityGoal;
 }

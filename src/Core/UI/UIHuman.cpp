@@ -46,7 +46,6 @@ void UIHuman::draw(Shader& shader, const Shader&) const
             if(!layer)
                 continue;
 
-            LOG_DEBUG("Drawing layer %s", layer.c_str());
             layer->bind();
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -74,12 +73,7 @@ void UIHuman::tick()
         m_deletionTimer.start();
         m_deletionTimer.pause();
 
-        setAnimation("exploding");
-        setScale(200, 200);
-        Outrospection::get().audioManager.play("explode", 0.5);
-
-        m_obliterationTimer.setDuration(300);
-        m_obliterationTimer.start();
+        explode();
     }
 
     m_obliterationTimer.tick();
@@ -133,4 +127,16 @@ void UIHuman::markForDeletion()
 {
     m_deletionTimer.setDuration(2000);
     m_deletionTimer.start();
+}
+
+void UIHuman::explode(bool silent)
+{
+    setAnimation("exploding");
+    setScale(200, 200);
+
+    if(!silent)
+        Outrospection::get().audioManager.play("explode", 0.5);
+
+    m_obliterationTimer.setDuration(300);
+    m_obliterationTimer.start();
 }

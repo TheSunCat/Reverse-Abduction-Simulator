@@ -3,6 +3,7 @@ in vec2 texCoords;
 out vec4 color;
 
 uniform sampler2D image;
+uniform float opacity;
 uniform bool flip;
 
 void main()
@@ -12,4 +13,6 @@ void main()
         coords.x = 1 - coords.x;
 
     color = texture(image, coords);
+
+    color.a *= opacity;
 }

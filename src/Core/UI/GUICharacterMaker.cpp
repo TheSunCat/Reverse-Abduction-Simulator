@@ -136,6 +136,8 @@ void GUICharacterMaker::draw() const
 
 void GUICharacterMaker::moveOutOfTheWay()
 {
+    m_ufoBeam.visible = false;
+
     m_human.setGoal(-5000, 0);
     for (UIButton* button : buttons)
     {

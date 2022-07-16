@@ -72,6 +72,9 @@ public:
 
     bool visible = true;
 
+    float animationSpeed = 0;
+    float opacityGoal = 1.0;
+
     virtual ~UIComponent() = default;
 protected:
     UITransform transform;
@@ -84,4 +87,6 @@ protected:
     std::unordered_map<std::string, SimpleTexture*> animations;
 
     glm::vec2 m_goal = glm::vec2(0);
+
+    float opacity = 1.0;
 };
