@@ -47,6 +47,15 @@ void GUIPeople::tick()
 
         human.tick();
     }
+
+    // update stats
+    int peopleCount = 0;
+    for(UIHuman& h : m_people) {
+        if(!h.isDead())
+            peopleCount++;
+    }
+
+    ((GUIStats*) Outrospection::get().layerPtrs["stats"])->setPeopleCount(peopleCount);
 }
 
 void GUIPeople::draw() const
@@ -71,35 +80,25 @@ void GUIPeople::addHuman(UIHuman human)
     human.setGoal(1550, 520);
     m_people.emplace_back(human);
 
+    int newHumanIndex = m_people.size() - 1;
+
     if(human.isBad()) {
-        /*for(int i = 0; i < m_people.size() - 1; i++) // exclude the new human that is bad
-        {
-            float random = rand() / float(RAND_MAX);
-            if(random > 0.75)
+        Util::doLater([this]() {
+            for(int i = 0; i < m_people.size() - 1; i++) // exclude the new human that is bad
             {
-                UIHuman& curHuman = m_people[i];
+                if(m_people[i].isDead())
+                    continue;
 
-                Util::doLater([&curHuman, &i, this]()
+                float random = rand() / float(RAND_MAX);
+                if(random > 0.75)
                 {
-                    curHuman.setScale(200, 200);
-                    curHuman.setAnimation("exploding");
-                    Outrospection::get().audioManager.play("explode", 0.5);
-
-                    Util::doLater([&i, this]() { this->m_people.erase(this->m_people.begin() + i); }, 300);
-                }, random * 1000 + 1000);
+                    m_people[i].markForDeletion();
+                }
             }
-        }*/
-
-        Util::doLater([&human]()
-        {
-            human.setScale(200, 200);
-            human.setAnimation("exploding");
-            //Outrospection::get().audioManager.play("explode", 0.5);
-        }, 2000);
+        }, 500);
 
         // delete bad human
-        //Util::doLater([&, this]() { std::remove(this->m_people.begin(), this->m_people.end(), human); }, 2300);
-    } else {
-        ((GUIStats*) Outrospection::get().layerPtrs["stats"])->setPeopleCount(m_people.size());
+        m_people[newHumanIndex].markForDeletion();
+
     }
 }

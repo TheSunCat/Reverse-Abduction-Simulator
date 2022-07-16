@@ -2,7 +2,8 @@
 
 UIHuman::UIHuman(const UITransform& transform) : UIComponent("Human base", TextureManager::None, transform)
 {
-
+    m_deletionTimer.pause();
+    m_obliterationTimer.pause();
 }
 
 void UIHuman::addToLayer(HumanLayer name, SimpleTexture* texture, bool bad)
@@ -58,9 +59,31 @@ void UIHuman::draw(Shader& shader, const Shader&) const
 void UIHuman::tick()
 {
     if(glm::length(m_goal) != 0 && transform.getPos() != m_goal) {
-        //LOG("LERPING HUMAN");
 
         transform.setPos(Util::lerp(transform.getPos(), m_goal, 0.01));
+    }
+
+    m_deletionTimer.tick();
+    if(m_deletionTimer.ended())
+    {
+        m_deletionTimer.start();
+        m_deletionTimer.pause();
+
+        setAnimation("exploding");
+        setScale(200, 200);
+        Outrospection::get().audioManager.play("explode", 0.5);
+
+        m_obliterationTimer.setDuration(300);
+        m_obliterationTimer.start();
+    }
+
+    m_obliterationTimer.tick();
+    if(m_obliterationTimer.ended())
+    {
+        m_obliterationTimer.start();
+        m_obliterationTimer.pause();
+
+        setAnimation("dead");
     }
 }
 
@@ -110,4 +133,15 @@ bool UIHuman::isBad()
     }
 
     return false;
+}
+
+bool UIHuman::isDead()
+{
+   return curAnimation == "dead";
+}
+
+void UIHuman::markForDeletion()
+{
+    m_deletionTimer.setDuration(2000);
+    m_deletionTimer.start();
 }

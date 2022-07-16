@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIComponent.h"
+#include <Timer.h>
 
 enum class HumanLayer
 {
@@ -31,6 +32,9 @@ public:
     void warpToGoal();
 
     bool isBad();
+    bool isDead();
+
+    void markForDeletion();
 
 private:
     std::array<std::vector<SimpleTexture*>, 5> m_layers;
@@ -38,4 +42,6 @@ private:
     std::array<std::vector<bool>, 5> m_layerBad;
 
     glm::vec2 m_goal = glm::vec2(0);
+
+    Timer m_deletionTimer, m_obliterationTimer;
 };

@@ -4,6 +4,7 @@
 
 Timer::Timer(time_t duration, bool start) : m_paused(!start), m_timeLeft(duration)
 {
+    m_paused = true;
     if(start)
         m_endTime = Util::currentTimeMillis() + m_timeLeft;
 
@@ -34,6 +35,9 @@ void Timer::setDuration(time_t duration)
 
 void Timer::tick()
 {
+    if(m_paused)
+        return;
+
     time_t curTime = Util::currentTimeMillis();
 
     time_t deltaTime = curTime - m_currentTime;
