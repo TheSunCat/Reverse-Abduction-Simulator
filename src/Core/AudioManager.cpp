@@ -33,6 +33,10 @@ AudioManager::~AudioManager()
     engine.deinit();
 }
 
+float filter_param0[6] = { 0, 0, 0, 0, 0, 0 };
+float filter_param1[6] = { 1000, 8000, 0, 0, 0 ,0 };
+float filter_param2[6] = { 2, 3,  0, 0, 0, 0 };
+
 void AudioManager::play(const std::string& soundName, float vol, bool loop)
 {
     auto& [key, wave] = *waves.try_emplace(soundName).first;

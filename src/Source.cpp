@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 #endif
 
     // check if we can read the filesystem
-    bool canReadFiles = Util::fileExists("res/ShaderData/crt.vert");
+    bool canReadFiles = Util::fileExists("res/ShaderData/sprite.vert");
     if(!canReadFiles)
     {
         std::string err = "Can't access \"res\" folder! Make sure you:\n- run the game from its directory\n- see the \"res\" folder next to the game\n- have unzipped it fully";

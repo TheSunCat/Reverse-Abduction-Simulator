@@ -246,18 +246,9 @@ void Outrospection::runGameLoop()
     // Draw the frame!
     {
         glDisable(GL_DEPTH_TEST); // disable depth test so stuff near camera isn't clipped
-        
-        framebuffers["crt"].bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        //if(!won)
-        //    scene->draw();
 
         framebuffers["default"].bind();
         glClear(GL_COLOR_BUFFER_BIT);
-
-        // draw CRT with shader effect
-        shaders["crt"].use();
         
         glBindVertexArray(crtVAO);
         framebuffers["crt"].bindTexture();
@@ -388,7 +379,6 @@ void Outrospection::createShaders()
     LOG_INFO("Setting up shaders...");
 
     shaders.insert(std::make_pair("screen", Shader("screen", "screen")));
-    shaders.insert(std::make_pair("crt",    Shader("crt"   , "crt"   )));
     shaders.insert(std::make_pair("sprite", Shader("sprite", "sprite")));
     shaders.insert(std::make_pair("glyph",  Shader("sprite", "glyph" )));
 }

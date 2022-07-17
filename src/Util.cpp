@@ -737,6 +737,22 @@ int Util::stoi(const std::string_view& str)
     return int(Util::stof(str)); // lolrip, fast_float doesn't support int
 }
 
+#ifdef PLATFORM_WINDOWS
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
+void Util::openLink(const std::string& link)
+{
+#ifdef PLATFORM_WINDOWS
+    ShellExecute(0, 0, link, 0, 0 , SW_SHOW );
+#else
+    std::string command = "xdg-open " + link;
+    system(command.c_str());
+#endif
+}
+
+
 Util::Timer::Timer() : Timer::Timer("")     { }
 
 Util::Timer::Timer(const char* _name) : begin(std::chrono::high_resolution_clock::now()),

@@ -63,6 +63,11 @@ void GUIPostGame::tick()
     m_boss.tick();
     m_ufoText.tick();
     m_bossText.tick();
+
+    for(UIButton* button : buttons)
+    {
+        button->tick();
+    }
 }
 
 void GUIPostGame::draw() const
@@ -77,6 +82,10 @@ void GUIPostGame::draw() const
     m_backgroundFade.draw();
     m_planetDown.draw();
 
+    for(UIButton* button : buttons)
+    {
+        button->draw();
+    }
 }
 
 void GUIPostGame::start(bool goodEnding)
@@ -196,6 +205,14 @@ void GUIPostGame::start(bool goodEnding)
 
         m_backgroundFade.moveLinearly = true;
         m_backgroundFade.setGoal(0, 2000);
+
+        buttons.push_back(new UIButton("octopuzzlerURL", TextureManager::None, UITransform(960, 350, 900, 100), Bounds(), [](UIButton&, int){
+            Util::openLink("https://2foamboards.itch.io/octopuzzler");
+        }));
+
+        buttons.push_back(new UIButton("gitURL", TextureManager::None, UITransform(560, 500, 1300, 100), Bounds(), [](UIButton&, int){
+            Util::openLink("https://github.com/RealTheSunCat/Reverse-Abduction-Simulator");
+        }));
     }, 19150);
 
 }
