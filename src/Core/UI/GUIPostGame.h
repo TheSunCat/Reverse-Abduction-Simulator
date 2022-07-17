@@ -13,6 +13,8 @@ public:
 
     void start(bool goodEnding);
 
+    void setScore(int score);
+
     ~GUIPostGame();
 
 private:
@@ -27,4 +29,7 @@ private:
 
     UIComponent m_ufoText;
     UIComponent m_bossText;
+
+    UIComponent m_human;
+    UIComponent m_scoreValueText;
 };

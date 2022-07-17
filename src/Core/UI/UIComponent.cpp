@@ -114,7 +114,7 @@ void UIComponent::tick()
     if(glm::length(m_goal) != 0 && transform.getPos() != m_goal)
     {
         if(moveLinearly)
-            transform.setPos(transform.getPos() + (glm::normalize(m_goal - transform.getPos())));
+            transform.setPos(transform.getPos() + (2 * glm::normalize(m_goal - transform.getPos())));
         else
             transform.setPos(Util::lerp(transform.getPos(), m_goal, animationSpeed));
     }
@@ -170,7 +170,7 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
 
     if(bobUpAndDown)
     {
-        pos.y += transform.getSize().y * 0.1f * sin((Util::currentTimeMillis() % 100000) / 1000.f + float(Util::hashBytes(text.c_str(), text.length()) % 10000) / 1000.f);
+        pos.y += transform.getSize().y * 0.1f * sin((Util::currentTimeMillis() % 100000) / 1000.f + float(Util::hashBytes(text.c_str(), text.length()) % 10000) / 100.f);
 
         //printf("%f\n", Util::currentTimeMillis() % 100000);
     }

@@ -1,5 +1,8 @@
 #include "GUIPostGame.h"
 #include "GUIBackground.h"
+#include "GUIStats.h"
+#include "GUIPeople.h"
+#include "GUIStats.h"
 
 GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
                     m_backgroundFade("fade", simpleTexture({"ObjectData/UI/", "fadeColor"}, GL_NEAREST), UITransform(0, 0, 1920, 1080)),
@@ -9,7 +12,10 @@ GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
                     m_ufo("End UFO", simpleTexture({"ObjectData/end/", "ufo"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                     m_boss("End boss UFO", simpleTexture({"ObjectData/end/", "boss"}, GL_LINEAR), UITransform(2000, 0, 1920, 1080)),
                     m_ufoText("End UFO text", simpleTexture({"ObjectData/end/", "ellipsis"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
-                    m_bossText("End Boss text", simpleTexture({"ObjectData/end/", "whatDidIMiss"}, GL_LINEAR), UITransform(0, 0, 1920, 1080))
+                    m_bossText("End Boss text", simpleTexture({"ObjectData/end/", "whatDidIMiss"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
+                    m_human("human", simpleTexture({"ObjectData/", "purplePerson"}, GL_LINEAR), UITransform(1400, 800, 99, 120)),
+                    m_scoreValueText("End score value", TextureManager::None, UITransform(1500, 830, 100, 100))
+
 {
     m_backgroundFade.animationSpeed = 0.1;
     m_backgroundFade.opacityGoal = 0;
@@ -37,6 +43,13 @@ GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
     m_ufoText.visible = false;
     m_bossText.visible = false;
 
+    m_scoreValueText.visible = false;
+    m_scoreValueText.textSize = 2;
+    m_scoreValueText.textShadow = true;
+    m_scoreValueText.textColor = Color(0.6475, 0.5569, 0.9686);
+
+    m_human.visible = false;
+
 
     m_planetDown.addAnimation("planetDown", animatedTexture({"ObjectData/", "goodbyeWorld/"}, 3, 32, GL_NEAREST, false));
 
@@ -63,6 +76,8 @@ void GUIPostGame::tick()
     m_boss.tick();
     m_ufoText.tick();
     m_bossText.tick();
+    m_scoreValueText.tick();
+    m_human.tick();
 
     for(UIButton* button : buttons)
     {
@@ -79,13 +94,17 @@ void GUIPostGame::draw() const
     m_bossText.draw();
 
     m_creditsSequence.draw();
-    m_backgroundFade.draw();
-    m_planetDown.draw();
+    m_scoreValueText.draw();
+    m_human.draw();
 
     for(UIButton* button : buttons)
     {
         button->draw();
     }
+
+    m_backgroundFade.draw();
+    m_planetDown.draw();
+
 }
 
 void GUIPostGame::start(bool goodEnding)
@@ -93,6 +112,9 @@ void GUIPostGame::start(bool goodEnding)
     // TODO this code is bad, eh
 
     auto& o = Outrospection::get();
+
+    // save the score before humans explode
+    setScore(((GUIPeople*)o.layerPtrs["people"])->humanCount());
 
     o.pushOverlay(o.layerPtrs["postGame"]);
 
@@ -199,7 +221,7 @@ void GUIPostGame::start(bool goodEnding)
         m_backgroundFade.opacityGoal = 1.0;
     }, 17500);
 
-    Util::doLater([this](){
+    Util::doLater([this, &o](){
         m_creditsSequence.opacityGoal = 1.0;
         m_creditsSequence.warpToGoal();
 
@@ -213,9 +235,31 @@ void GUIPostGame::start(bool goodEnding)
         buttons.push_back(new UIButton("gitURL", TextureManager::None, UITransform(560, 500, 1300, 100), Bounds(), [](UIButton&, int){
             Util::openLink("https://github.com/RealTheSunCat/Reverse-Abduction-Simulator");
         }));
+
+        buttons.push_back(new UIButton("exit", simpleTexture({"ObjectData/UI/", "exitButton"}, GL_LINEAR), UITransform(50, 913, 126, 127), Bounds(), [](UIButton&, int){
+            Outrospection::get().stop();
+        }));
+        buttons[buttons.size() - 1]->addAnimation("hovered", simpleTexture({"ObjectData/UI/", "exitButtonHover"}, GL_LINEAR));
+
+        buttons[buttons.size() - 1]->onHover = [] (UIButton& b, int) {
+            b.setAnimation("hovered");
+        };
+
+        buttons[buttons.size() - 1]->onUnhover = [] (UIButton& b, int) {
+            b.setAnimation("default");
+        };
+
+        m_scoreValueText.visible = true;
+        m_human.visible = true;
     }, 18500);
 
 }
+
+void GUIPostGame::setScore(int score)
+{
+    m_scoreValueText.text = "x " + std::to_string(score);
+}
+
 
 GUIPostGame::~GUIPostGame()
 {
