@@ -17,11 +17,12 @@
 #include "Events/MouseEvent.h"
 #include "Events/WindowEvent.h"
 
-#include <Core/UI/GUIBackground.h>
-#include <Core/UI/GUICharacterMaker.h>
+#include "Core/UI/GUIBackground.h"
+#include "Core/UI/GUICharacterMaker.h"
 #include "Core/UI/GUIStats.h"
 #include "Core/UI/GUIPeople.h"
 #include "Core/UI/GUIPostGame.h"
+#include "Core/UI/GUITutorial.h"
 
 Outrospection* Outrospection::instance = nullptr;
 
@@ -34,7 +35,7 @@ Outrospection::Outrospection()
 
     loggerThread.start();
     // TODO consoleThread.start();
-    audioManager.init({ "newsongfornewgame", "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "reverseAbduction", "explode", "end" });
+    audioManager.init({ "newsongfornewgame", "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "reverseAbduction", "noo", "timesUp", "explode", "explodeFinal", "end" });
 
     gameWindow = opengl.gameWindow;
     crtVAO = opengl.crtVAO;
@@ -49,17 +50,15 @@ Outrospection::Outrospection()
     createIcon();
 
     setCursor("default");
-    
+
+    layerPtrs["tutorial"] = new GUITutorial();
     layerPtrs["background"] = new GUIBackground();
     layerPtrs["characterMaker"] = new GUICharacterMaker();
     layerPtrs["stats"] = new GUIStats();
     layerPtrs["people"] = new GUIPeople();
     layerPtrs["postGame"] = new GUIPostGame();
 
-    pushOverlay(layerPtrs["background"]);
-    pushOverlay(layerPtrs["people"]);
-    pushOverlay(layerPtrs["characterMaker"]);
-    pushOverlay(layerPtrs["stats"]);
+    pushOverlay(layerPtrs["tutorial"]);
 
     audioManager.play("newsongfornewgame", 1, true);
 

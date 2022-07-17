@@ -28,10 +28,6 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
 
     m_planetCount.textSize = 1.5;
     m_planetCount.textColor = Color(0.9843, 0.9490, 0.8039);
-
-
-    m_timer.setDuration(5000);
-    m_timer.start();
 }
 
 GUIStats::~GUIStats()
@@ -78,6 +74,7 @@ void GUIStats::tick()
 
         auto& o = Outrospection::get();
         ((GUICharacterMaker*)o.layerPtrs["characterMaker"])->moveOutOfTheWay();
+        o.audioManager.play("timesUp");
 
         Util::doLater([&o] () {
             ((GUIPostGame*)o.layerPtrs["postGame"])->start(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50);

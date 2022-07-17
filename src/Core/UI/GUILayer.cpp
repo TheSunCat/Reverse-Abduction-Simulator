@@ -36,6 +36,7 @@ void GUILayer::onEvent(Event& event)
     dispatchEvent<KeyReleasedEvent>(event, std::bind(&GUILayer::onKeyReleased, this, std::placeholders::_1));
     dispatchEvent<MouseButtonPressedEvent>(event, std::bind(&GUILayer::onMousePressed, this, std::placeholders::_1));
     dispatchEvent<MouseButtonReleasedEvent>(event, std::bind(&GUILayer::onMouseReleased, this, std::placeholders::_1));
+    dispatchEvent<MouseMovedEvent>(event, std::bind(&GUILayer::onMouseMoved, this, std::placeholders::_1));
 }
 
 bool GUILayer::onKeyPressed(KeyPressedEvent& event)
@@ -68,5 +69,10 @@ bool GUILayer::onMousePressed(MouseButtonPressedEvent& event)
 bool GUILayer::onMouseReleased(MouseButtonReleasedEvent& event)
 {
     Outrospection::get().setCursor("default");
+    return false;
+}
+
+bool GUILayer::onMouseMoved(MouseMovedEvent& event)
+{
     return false;
 }

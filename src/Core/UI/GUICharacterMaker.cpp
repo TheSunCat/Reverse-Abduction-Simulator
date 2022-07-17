@@ -99,6 +99,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     {
         ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
         Outrospection::get().audioManager.play("reverseAbduction", 0.2);
+        Outrospection::get().audioManager.play("noo");
 
         m_ufoBeam.opacityGoal = 1.0;
 

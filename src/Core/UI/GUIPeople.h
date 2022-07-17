@@ -23,4 +23,6 @@ public:
     DISALLOW_COPY_AND_ASSIGN(GUIPeople);
 private:
     std::vector<UIHuman> m_people;
+
+    bool m_ending = false;
 };
