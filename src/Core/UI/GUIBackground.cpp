@@ -35,6 +35,7 @@ void GUIBackground::startEndSequence()
 
     globe.animationSpeed = 1;
     globe.setGoal(520, 20);
+    globe.warpToGoal();
 
     ((GUIPeople*)o.layerPtrs["people"])->center();
 

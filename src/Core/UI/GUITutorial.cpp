@@ -14,9 +14,7 @@ GUITutorial::GUITutorial() : GUILayer("Tutorial", false), m_tutorial("Tutorial",
         o.pushOverlay(o.layerPtrs["characterMaker"]);
         o.pushOverlay(o.layerPtrs["stats"]);
 
-        ((GUIStats*)o.layerPtrs["stats"])->setTimer(150000);
-
-        LOG("Pressed!");
+        ((GUIStats*)o.layerPtrs["stats"])->setTimer(15000);
     }));
 }
 

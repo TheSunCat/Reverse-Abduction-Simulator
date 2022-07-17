@@ -30,4 +30,6 @@ private:
 
     UIComponent m_planetCount;
     UIComponent m_planetIcon;
+
+    UIComponent m_goal;
 };

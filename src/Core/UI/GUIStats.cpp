@@ -13,7 +13,8 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
                         m_peopleCount("x 0", TextureManager::None, UITransform(1000, 680, 100, 100)),
                         m_peopleIcon("peopleIcon", simpleTexture({"ObjectData/", "person"}, GL_LINEAR), UITransform(930, 680, 66, 80)),
                         m_planetCount("x 1", TextureManager::None, UITransform(1030, 800, 100, 100)),
-                        m_planetIcon("planetIcon", simpleTexture({"ObjectData/", "planet"}, GL_LINEAR), UITransform(930, 800, 100, 100))
+                        m_planetIcon("planetIcon", simpleTexture({"ObjectData/", "planet"}, GL_LINEAR), UITransform(930, 800, 100, 100)),
+                        m_goal("person goal", simpleTexture({"ObjectData/", "goal50"}, GL_LINEAR), UITransform(700, 950, 333, 91))
 {
     m_timerDisplay.textShadow = true;
     m_timerDisplay.textSize = 3.5;
@@ -61,6 +62,7 @@ void GUIStats::tick()
     m_peopleIcon.tick();
     m_planetCount.tick();
     m_planetIcon.tick();
+    m_goal.tick();
 
     using namespace std;
     stringstream ss;
@@ -91,4 +93,5 @@ void GUIStats::draw() const
     m_peopleIcon.draw();
     m_planetCount.draw();
     m_planetIcon.draw();
+    m_goal.draw();
 }
