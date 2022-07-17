@@ -26,6 +26,7 @@ public:
 
     void init(const std::vector<std::string>& sounds = std::vector<std::string>());
     void play(const std::string& soundName, float vol = 1.0f, bool loop = false);
+    void stop(const std::string& soundName);
 
     void setSoundVolume(const std::string& sound, float vol);
     void setGlobalVolume(float vol);

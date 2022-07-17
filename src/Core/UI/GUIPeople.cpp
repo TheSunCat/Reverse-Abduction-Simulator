@@ -129,8 +129,9 @@ void GUIPeople::center()
             goal.x += r * cos(theta);
             goal.y += r * sin(theta);
 
-            h.animationSpeed = 0.4;
+            //h.moveLinearly = true;
             h.setGoal(goal.x, goal.y);
+            h.warpToGoal();
         }
     }
 }

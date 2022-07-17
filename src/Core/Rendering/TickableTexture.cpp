@@ -1,9 +1,10 @@
 #include "TickableTexture.h"
 
 TickableTexture::TickableTexture(const std::vector<GLuint>& texIds, const std::string& _texPath,
-                                 const unsigned int _frameLength)
+                                 const unsigned int _frameLength, bool _shouldRestart)
     : SimpleTexture(texIds.at(0)), textures(texIds), frameLength(_frameLength)
 {
+    loop = _shouldRestart;
     shouldTick = true;
 
     texId = textures[0];
@@ -35,7 +36,7 @@ void TickableTexture::nextFrame()
 {
     if (curFrame < (textures.size() - 1))
         curFrame++;
-    else
+    else if(loop)
         curFrame = 0;
 
     texId = textures.at(curFrame);

@@ -11,13 +11,20 @@ public:
     virtual void tick() override;
     virtual void draw() const override;
 
-    void fadeIn();
-    void fadeOut();
+    void start(bool goodEnding);
 
     ~GUIPostGame();
 
 private:
     UIComponent m_backgroundFade;
-
     UIComponent m_planetDown;
+    UIComponent m_creditsSequence;
+
+    UIComponent m_starrySky;
+
+    UIComponent m_ufo;
+    UIComponent m_boss;
+
+    UIComponent m_ufoText;
+    UIComponent m_bossText;
 };
