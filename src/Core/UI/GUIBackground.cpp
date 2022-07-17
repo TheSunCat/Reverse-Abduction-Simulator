@@ -7,7 +7,7 @@ GUIBackground::GUIBackground() : GUILayer("Background", false),
                                 background("Starry sky", animatedTexture({"ObjectData/UI/", "starrySky"}, 10, 2, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                                 globe("globe", GL_NEAREST, UITransform(1100, 20, 880, 880))
 {
-    globe.addAnimation("explode", animatedTexture({"ObjectData/", "explosion"}, 16, 8, GL_NEAREST));
+    globe.addAnimation("explode", animatedTexture({"ObjectData/", "explosion"}, 8, 8, GL_NEAREST));
     globe.addAnimation("gone", TextureManager::None);
 }
 
@@ -40,7 +40,7 @@ void GUIBackground::startEndSequence()
 
     Util::doLater([this, &o]() {
         globe.setAnimation("explode");
-        o.audioManager.play("explode", 0.5);
+        o.audioManager.play("explodeFinal");
 
         ((GUIPeople*)o.layerPtrs["people"])->explodeAll();
     }, 1500);

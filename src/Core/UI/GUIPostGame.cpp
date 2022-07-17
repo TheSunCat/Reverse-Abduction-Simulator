@@ -34,17 +34,9 @@ GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
     m_ufo.bobUpAndDown = true;
     m_boss.bobUpAndDown = true;
 
-
     m_ufoText.visible = false;
     m_bossText.visible = false;
-    /*
-    m_ufoText.animationSpeed = 0.1;
-    m_ufoText.opacityGoal = 0;
-    m_ufoText.warpToGoal();
 
-    m_bossText.animationSpeed = 0.1;
-    m_bossText.opacityGoal = 0;
-    m_bossText.warpToGoal();*/
 
     m_planetDown.addAnimation("planetDown", animatedTexture({"ObjectData/", "goodbyeWorld/"}, 3, 32, GL_NEAREST, false));
 

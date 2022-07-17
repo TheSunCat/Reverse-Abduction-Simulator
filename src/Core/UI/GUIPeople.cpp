@@ -26,7 +26,7 @@ void GUIPeople::tick()
     {
         UIHuman& human = m_people[i];
 
-        if(!human.hasGoal()) {
+        if(!human.hasGoal() && !m_ending) {
 
             // random chance to assign a new goal
             float random = rand() / float(RAND_MAX);
@@ -120,6 +120,8 @@ void GUIPeople::explodeAll()
 
 void GUIPeople::center()
 {
+    m_ending = true;
+
     for(UIHuman& h : m_people) {
         if(!h.isDead()) {
             float r = 200 * sqrt(rand() / float(RAND_MAX));
@@ -129,9 +131,9 @@ void GUIPeople::center()
             goal.x += r * cos(theta);
             goal.y += r * sin(theta);
 
-            //h.moveLinearly = true;
+            h.animationSpeed = 2;
             h.setGoal(goal.x, goal.y);
-            h.warpToGoal();
+            //h.warpToGoal();
         }
     }
 }

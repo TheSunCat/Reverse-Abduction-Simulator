@@ -8,6 +8,7 @@ class KeyPressedEvent;
 class KeyReleasedEvent;
 class MouseButtonPressedEvent;
 class MouseButtonReleasedEvent;
+class MouseMovedEvent;
 
 class GUILayer : public Layer
 {
@@ -24,6 +25,7 @@ public:
     virtual bool onKeyReleased(KeyReleasedEvent& event);
     virtual bool onMousePressed(MouseButtonPressedEvent& event);
     virtual bool onMouseReleased(MouseButtonReleasedEvent& event);
+    virtual bool onMouseMoved(MouseMovedEvent& event);
 
 protected:
     std::vector<UIButton*> buttons;

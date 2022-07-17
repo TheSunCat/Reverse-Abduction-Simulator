@@ -63,6 +63,7 @@ list(APPEND Outrospection_SOURCES
 	"src/Core/UI/GUIPeople.cpp"
 	"src/Core/UI/GUIPostGame.cpp"
 	"src/Core/UI/GUIStats.cpp"
+	"src/Core/UI/GUITutorial.cpp"
 	"src/Core/UI/UIButton.cpp"
 	"src/Core/UI/UIComponent.cpp"
 	"src/Core/UI/UIHuman.cpp"

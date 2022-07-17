@@ -23,14 +23,17 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::FACE, "face/1");
     m_human.addToLayer(HumanLayer::FACE, "face/2");
     m_human.addToLayer(HumanLayer::FACE, "face/3", true);
+    m_human.addToLayer(HumanLayer::FACE, "face/4");
     m_human.addToLayer(HumanLayer::TORSO, "torso/0");
     m_human.addToLayer(HumanLayer::TORSO, "torso/1");
     m_human.addToLayer(HumanLayer::TORSO, "torso/2", true);
     m_human.addToLayer(HumanLayer::TORSO, "torso/3");
+    m_human.addToLayer(HumanLayer::TORSO, "torso/4");
     m_human.addToLayer(HumanLayer::HANDS, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
     m_human.addToLayer(HumanLayer::HANDS, "hands/1", true);
     m_human.addToLayer(HumanLayer::HANDS, "hands/2");
+    m_human.addToLayer(HumanLayer::HANDS, "hands/3");
     m_human.addToLayer(HumanLayer::LEGS, "legs/0");
     m_human.addToLayer(HumanLayer::LEGS, "legs/1", true);
     m_human.addToLayer(HumanLayer::LEGS, "legs/2");
@@ -99,6 +102,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     {
         ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
         Outrospection::get().audioManager.play("reverseAbduction", 0.2);
+        Outrospection::get().audioManager.play("noo");
 
         m_ufoBeam.opacityGoal = 1.0;
 
