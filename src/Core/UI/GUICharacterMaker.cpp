@@ -7,9 +7,11 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
 {
     // TODO euch this code sucks
 
-    m_ufoBeam.visible = false;
+    m_ufoBeam.animationSpeed = 0.3;
+    m_ufoBeam.opacityGoal = 0.0;
+    m_ufoBeam.warpToGoal();
 
-    m_human.addAnimation("exploding", animatedTexture({"ObjectData/", "explosion"}, 2, 8, GL_NEAREST));
+    m_human.addAnimation("exploding", animatedTexture({"ObjectData/", "explosion"}, 2, 8, GL_NEAREST, false));
     m_human.addAnimation("dead", TextureManager::None);
 
     m_human.addToLayer(HumanLayer::HAT, &TextureManager::None);
@@ -28,6 +30,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::HANDS, &TextureManager::None);
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
     m_human.addToLayer(HumanLayer::HANDS, "hands/1", true);
+    m_human.addToLayer(HumanLayer::HANDS, "hands/2");
     m_human.addToLayer(HumanLayer::LEGS, "legs/0");
     m_human.addToLayer(HumanLayer::LEGS, "legs/1", true);
     m_human.addToLayer(HumanLayer::LEGS, "legs/2");
@@ -92,12 +95,12 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
         button->onUnhover = [](UIButton& button, int) { button.setAnimation("default"); };
     }
 
-    buttons.push_back(new UIButton("UFO", simpleTexture({"ObjectData/", "ufo"}, GL_LINEAR), UITransform(1050, 40, 260, 300), Bounds(UITransform(1100, 20, 300), BoundsShape::Circle), [&](UIButton&, int)
+    buttons.push_back(new UIButton("UFO", simpleTexture({"ObjectData/", "ufo"}, GL_LINEAR), UITransform(1050, 40, 260, 300), Bounds(UITransform(1100, 20, 200), BoundsShape::Circle), [&](UIButton&, int)
     {
         ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
         Outrospection::get().audioManager.play("reverseAbduction", 0.2);
 
-        m_ufoBeam.visible = true;
+        m_ufoBeam.opacityGoal = 1.0;
 
         m_beamTimer.setDuration(2000);
         m_beamTimer.start();
@@ -118,8 +121,9 @@ void GUICharacterMaker::tick()
     }
 
     m_beamTimer.tick();
-    if(m_beamTimer.ended())
-        m_ufoBeam.visible = false;
+    if(m_beamTimer.ended()) {
+        m_ufoBeam.opacityGoal = 0.0;
+    }
 
 }
 

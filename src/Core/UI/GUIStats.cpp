@@ -5,7 +5,7 @@
 #include "UIButton.h"
 #include "GUIPeople.h"
 #include "GUICharacterMaker.h"
-#include "GUIBackground.h"
+#include "GUIPostGame.h"
 
 GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", TextureManager::None, UITransform(1370, 940, 100, 100)),
                         m_bossIsBack("Boss is\nback in...", TextureManager::None, UITransform(1080, 900, 100, 100)),
@@ -30,7 +30,7 @@ GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Texture
     m_planetCount.textColor = Color(0.9843, 0.9490, 0.8039);
 
 
-    m_timer.setDuration(150000);
+    m_timer.setDuration(5000);
     m_timer.start();
 }
 
@@ -79,30 +79,9 @@ void GUIStats::tick()
         auto& o = Outrospection::get();
         ((GUICharacterMaker*)o.layerPtrs["characterMaker"])->moveOutOfTheWay();
 
-        Util::doLater([] () {
-            auto& o = Outrospection::get();
-
-            /*m_timerBlurTop.setGoal(1700, 5000);
-            m_timerDisplay.setGoal(1700, 5000);
-            m_bossIsBack.setGoal(1700, 5000);
-            m_peopleCount.setGoal(1700, 5000);
-            m_peopleIcon.setGoal(1700, 5000);
-            m_planetCount.setGoal(1700, 5000);
-            m_planetIcon.setGoal(1700, 5000);*/
-
-
-            if(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50)
-            {
-                LOG("Won! :D");
-            } else {
-                LOG("Lost! D:");
-                Util::doLater([]() {
-                    // TODO start cutscene before this
-
-                    ((GUIBackground*)Outrospection::get().layerPtrs["background"])->startEndSequence();
-                }, 2000);
-            }
-        }, 2000);
+        Util::doLater([&o] () {
+            ((GUIPostGame*)o.layerPtrs["postGame"])->start(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50);
+        }, 4000);
     }
 }
 

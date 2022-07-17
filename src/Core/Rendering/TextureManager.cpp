@@ -61,7 +61,7 @@ SimpleTexture& TextureManager::loadTexture(const Resource& r, const GLint& filte
 }
 
 SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& r, unsigned int textureTickLength,
-                                                   const unsigned int textureFrameCount, const GLint& filter)
+                                                   const unsigned int textureFrameCount, const GLint& filter, bool loop)
 {
     std::string path = r.getResourcePath();
 
@@ -85,7 +85,7 @@ SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& r, unsigned i
     }
 
     auto [it, success] = textures.insert(
-        std::pair(r, std::make_unique<TickableTexture>(textureIds, path, textureTickLength)));
+        std::pair(r, std::make_unique<TickableTexture>(textureIds, path, textureTickLength, loop)));
 
     return *(it->second);
 }

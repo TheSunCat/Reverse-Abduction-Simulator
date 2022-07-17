@@ -113,7 +113,10 @@ void UIComponent::tick()
 {
     if(glm::length(m_goal) != 0 && transform.getPos() != m_goal)
     {
-        transform.setPos(Util::lerp(transform.getPos(), m_goal, animationSpeed));
+        if(moveLinearly)
+            transform.setPos(transform.getPos() + (glm::normalize(m_goal - transform.getPos())));
+        else
+            transform.setPos(Util::lerp(transform.getPos(), m_goal, animationSpeed));
     }
 
     opacity = Util::lerp(opacity, opacityGoal, animationSpeed);
@@ -163,14 +166,24 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
 
     shader.use();
 
+    glm::vec2 pos = transform.getPos();
+
+    if(bobUpAndDown)
+    {
+        pos.y += transform.getSize().y * 0.1f * sin((Util::currentTimeMillis() % 100000) / 1000.f + float(Util::hashBytes(text.c_str(), text.length()) % 10000) / 1000.f);
+
+        //printf("%f\n", Util::currentTimeMillis() % 100000);
+    }
+
     // TODO maybe we should cache this
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(transform.getPos(), 0));
+    model = glm::translate(model, glm::vec3(pos, 0));
     model = glm::scale(model, glm::vec3(transform.getSize(), 0));
 
     shader.setMat4("model", model);
 
     shader.setFloat("opacity", opacity);
+    shader.setBool("flip", flip);
 
     glActiveTexture(GL_TEXTURE0);
     animations.at(curAnimation)->bind();
@@ -277,6 +290,8 @@ bool UIComponent::hasGoal()
 
 void UIComponent::warpToGoal()
 {
-    transform.setPos(m_goal);
+    if(glm::length(m_goal) > 0)
+        transform.setPos(m_goal);
+
     opacity = opacityGoal;
 }

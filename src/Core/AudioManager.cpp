@@ -37,7 +37,7 @@ void AudioManager::play(const std::string& soundName, float vol, bool loop)
 {
     auto& [key, wave] = *waves.try_emplace(soundName).first;
     if (!wave) {
-        LOG_ERROR("Sound was played without being pre-loaded! Please add its name to the init call.");
+        LOG_ERROR("Sound \"%s\" was played without being pre-loaded! Please add its name to the init call.", soundName);
 
         wave = std::make_unique<SoLoud::Wav>();
 
@@ -49,6 +49,17 @@ void AudioManager::play(const std::string& soundName, float vol, bool loop)
     wave->setLooping(loop);
 
     handles.insert_or_assign(soundName, engine.play(*wave, vol));
+}
+
+void AudioManager::stop(const std::string& soundName)
+{
+    auto f = handles.find(soundName); // <- I'm getting the error here
+    if (f == handles.end()) {
+        LOG_ERROR("Tried to stop nonexistent sound \"%s\"!", soundName);
+        return;
+    }
+
+    engine.stop(f->second);
 }
 
 void AudioManager::setSoundVolume(const std::string& sound, float vol)

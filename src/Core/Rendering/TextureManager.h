@@ -21,7 +21,7 @@ public:
     SimpleTexture& loadTexture(const Resource& r, const GLint& filter = GL_LINEAR);
 
     SimpleTexture& loadAnimatedTexture(const Resource& r, unsigned int textureTickLength,
-                                       unsigned int textureFrameCount, const GLint& filter = GL_LINEAR);
+                                       unsigned int textureFrameCount, const GLint& filter = GL_LINEAR, bool loop = true);
 
     void bindTexture(Resource& r);
 

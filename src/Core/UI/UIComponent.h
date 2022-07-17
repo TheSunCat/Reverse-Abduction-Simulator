@@ -71,7 +71,12 @@ public:
     bool textShadow = false;
 
     bool visible = true;
+    bool flip = false;
 
+    // gimme a break this is speed-coding
+    bool bobUpAndDown = false;
+
+    bool moveLinearly = false;
     float animationSpeed = 0;
     float opacityGoal = 1.0;
 

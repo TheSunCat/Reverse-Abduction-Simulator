@@ -7,7 +7,7 @@ GUIBackground::GUIBackground() : GUILayer("Background", false),
                                 background("Starry sky", animatedTexture({"ObjectData/UI/", "starrySky"}, 10, 2, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                                 globe("globe", GL_NEAREST, UITransform(1100, 20, 880, 880))
 {
-    globe.addAnimation("explode", animatedTexture({"ObjectData/", "explosion"}, 4, 8, GL_NEAREST));
+    globe.addAnimation("explode", animatedTexture({"ObjectData/", "explosion"}, 16, 8, GL_NEAREST));
     globe.addAnimation("gone", TextureManager::None);
 }
 
@@ -32,31 +32,21 @@ void GUIBackground::draw() const
 void GUIBackground::startEndSequence()
 {
     auto& o = Outrospection::get();
-    o.popOverlay(o.layerPtrs["characterMaker"]);
-    o.popOverlay(o.layerPtrs["stats"]);
 
-
-    globe.animationSpeed = 0.1;
+    globe.animationSpeed = 1;
     globe.setGoal(520, 20);
 
     ((GUIPeople*)o.layerPtrs["people"])->center();
 
-    Util::doLater([this]() {
-        auto& o = Outrospection::get();
-
+    Util::doLater([this, &o]() {
         globe.setAnimation("explode");
-        Outrospection::get().audioManager.play("explode", 0.5);
+        o.audioManager.play("explode", 0.5);
 
         ((GUIPeople*)o.layerPtrs["people"])->explodeAll();
-    }, 1000);
+    }, 1500);
 
     Util::doLater([this]() {
-        auto& o = Outrospection::get();
-
         globe.setAnimation("gone");
-
-        o.pushOverlay(o.layerPtrs["postGame"]);
-        ((GUIPostGame*)o.layerPtrs["postGame"])->fadeIn();
-    }, 1550);
+    }, 2550);
 }
 

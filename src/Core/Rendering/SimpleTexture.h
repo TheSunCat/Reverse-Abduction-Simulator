@@ -17,6 +17,7 @@ public:
 
     virtual void reset();
     bool shouldTick = false;
+    bool loop = true;
 
     GLuint texId = 0;
 

@@ -66,9 +66,9 @@ std::string operator+(int i, const std::string& str)
     return std::to_string(i) + str;
 }
 
-SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter)
+SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop)
 {
-    return Outrospection::get().textureManager.loadAnimatedTexture(resource, tickLength, frameCount, filter);
+    return Outrospection::get().textureManager.loadAnimatedTexture(resource, tickLength, frameCount, filter, loop);
 }
 
 SimpleTexture& simpleTexture(const Resource& resource, const GLint& filter)
@@ -110,7 +110,7 @@ void Util::split(const std::string& input, const char& delimiter, std::vector<st
 
 time_t Util::currentTimeMillis()
 {
-    auto now = std::chrono::system_clock::now();
+    auto now = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 }
 
