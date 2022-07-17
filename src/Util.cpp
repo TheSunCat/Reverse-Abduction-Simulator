@@ -745,7 +745,7 @@ int Util::stoi(const std::string_view& str)
 void Util::openLink(const std::string& link)
 {
 #ifdef PLATFORM_WINDOWS
-    ShellExecute(0, 0, link, 0, 0 , SW_SHOW );
+    ShellExecute(0, 0, link.c_str(), 0, 0, SW_SHOW);
 #else
     std::string command = "xdg-open " + link;
     system(command.c_str());
