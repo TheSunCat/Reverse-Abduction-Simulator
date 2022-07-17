@@ -128,11 +128,11 @@ void Outrospection::onEvent(Event& e)
     dispatchEvent<KeyPressedEvent>(e, BIND_EVENT_FUNC(Outrospection::onKeyPressed));
     dispatchEvent<KeyReleasedEvent>(e, BIND_EVENT_FUNC(Outrospection::onKeyReleased));
 
-    for (auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
+    for (int i = layerStack.size() - 1; i >= 0; i--)
     {
         if (e.handled)
             break;
-        (*it)->onEvent(e);
+        layerStack[i]->onEvent(e);
     }
 }
 

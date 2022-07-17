@@ -23,6 +23,9 @@ public:
     std::vector<Layer*>::const_iterator end() const { return layers.end(); }
     std::vector<Layer*>::const_reverse_iterator rbegin() const { return layers.rbegin(); }
     std::vector<Layer*>::const_reverse_iterator rend() const { return layers.rend(); }
+
+    int size() const { return layers.size(); }
+    Layer* operator[](int i) { return layers[i]; }
 private:
     std::vector<Layer*> layers;
     unsigned int layerInsertIndex = 0;
