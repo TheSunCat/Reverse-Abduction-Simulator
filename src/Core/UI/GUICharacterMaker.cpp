@@ -102,7 +102,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     {
         ((GUIPeople*)(Outrospection::get().layerPtrs["people"]))->addHuman(m_human);
         Outrospection::get().audioManager.play("reverseAbduction", 0.2);
-        Outrospection::get().audioManager.play("noo");
+        Outrospection::get().audioManager.play("noo" + std::to_string(int(rand() / float(RAND_MAX) * 3)));
 
         m_ufoBeam.opacityGoal = 1.0;
 

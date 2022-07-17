@@ -187,9 +187,9 @@ void GUIPostGame::start(bool goodEnding)
         m_planetDown.opacityGoal = 1.0;
     }, 14150);
 
-    Util::doLater([this](){
+    Util::doLater([this, &o](){
         m_planetDown.setAnimation("planetDown");
-        // TODO play sound
+        o.audioManager.play("planetDown");
     }, 15150);
     Util::doLater([this](){
         m_planetDown.opacityGoal = 0.0;
@@ -197,7 +197,7 @@ void GUIPostGame::start(bool goodEnding)
 
     Util::doLater([this](){
         m_backgroundFade.opacityGoal = 1.0;
-    }, 18150);
+    }, 17500);
 
     Util::doLater([this](){
         m_creditsSequence.opacityGoal = 1.0;
@@ -213,7 +213,7 @@ void GUIPostGame::start(bool goodEnding)
         buttons.push_back(new UIButton("gitURL", TextureManager::None, UITransform(560, 500, 1300, 100), Bounds(), [](UIButton&, int){
             Util::openLink("https://github.com/RealTheSunCat/Reverse-Abduction-Simulator");
         }));
-    }, 19150);
+    }, 18500);
 
 }
 

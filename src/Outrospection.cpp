@@ -35,7 +35,10 @@ Outrospection::Outrospection()
 
     loggerThread.start();
     // TODO consoleThread.start();
-    audioManager.init({ "newsongfornewgame", "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "reverseAbduction", "noo", "timesUp", "explode", "explodeFinal", "end" });
+    audioManager.init({
+         "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "explode", "explodeFinal", "end",
+         "newsongfornewgame", "noo0", "noo1", "noo2", "noo3", "timesUp", "reverseAbduction", "planetDown"
+    });
 
     gameWindow = opengl.gameWindow;
     crtVAO = opengl.crtVAO;
