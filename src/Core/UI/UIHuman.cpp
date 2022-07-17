@@ -105,6 +105,18 @@ void UIHuman::rollTheDice()
         float random = rand() / float(RAND_MAX) * m_layers[i].size();
 
         m_curLayer[i] = random;
+
+        for(int k = 0; k < m_layers[i].size(); k++) {
+            int r = k + rand() % (m_layers[i].size() - k);
+
+            SimpleTexture* temp = m_layers[i][k];
+            m_layers[i][k] = m_layers[i][r];
+            m_layers[i][r] = temp;
+
+            bool temp2 = m_layerBad[i][k];
+            m_layerBad[i][k] = m_layerBad[i][r];
+            m_layerBad[i][r] = temp2;
+        }
     }
 }
 
