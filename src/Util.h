@@ -220,6 +220,8 @@ namespace Util
 
     int stoi(const std::string_view& str);
 
+    void openLink(const std::string& link);
+
     class Timer
     {
     public:
