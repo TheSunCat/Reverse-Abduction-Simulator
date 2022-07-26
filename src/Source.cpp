@@ -1,5 +1,14 @@
 #include "Outrospection.h"
 
+#ifdef USE_GLFM
+void glfmMain(GLFMDisplay *display) {
+    int argc = 0;
+    char** argv = "Outrospection";
+
+    auto outrospection = Outrospection(display);
+
+#else // #ifdef USE_GLFM
+
 // ugly Windows code so that we don't open a cmd window along the program, but can still see output if we start from cmd
 #ifdef PLATFORM_WINDOWS
 bool haveConsole = false;
@@ -10,7 +19,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     if (AllocConsole()) {
 #else
     if (AttachConsole(ATTACH_PARENT_PROCESS)) { // set up console output (if there is a console to attach to)
-#endif
+#endif // #ifdef DEBUG
+        
         FILE* empty;
         freopen_s(&empty, "CONOUT$", "w", stdout);
         freopen_s(&empty, "CONOUT$", "w", stderr);
@@ -19,9 +29,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     int argc = __argc;
     auto argv = __argv;
-#else
+#else // #ifdef PLATFORM_WINDOWS
+
 int main(int argc, char** argv) {
-#endif
+#endif // #ifdef PLATFORM_WINDOWS
 
     // check if we can read the filesystem
     bool canReadFiles = Util::fileExists("res/ShaderData/sprite.vert");
@@ -40,13 +51,14 @@ int main(int argc, char** argv) {
         {
             MessageBox(nullptr, err.c_str(), "Unable to start Outrospection Engine!", MB_OK);
         }
-#endif
+#endif // #ifndef PLATFORM_WINDOWS
 
         return -1;
     }
 
     auto outrospection = Outrospection();
-    
+
+#endif // #ifdef PLATFORM_GLFM
 
     // run the game!
     outrospection.run();

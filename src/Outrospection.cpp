@@ -26,7 +26,11 @@
 
 Outrospection* Outrospection::instance = nullptr;
 
+#ifdef USE_GLFM
+Outrospection::Outrospection(GLFMDisplay* display) : openGL(display, onSurfaceCreated, onSurfaceDestroyed, onFrame, onTouch)
+#else
 Outrospection::Outrospection()
+#endif
 {
     instance = this;
 
@@ -40,17 +44,24 @@ Outrospection::Outrospection()
          "newsongfornewgame", "noo0", "noo1", "noo2", "noo3", "timesUp", "reverseAbduction", "planetDown"
     });
 
+#ifdef USE_GLFM
+    gameDisplay = display;
+#else
     gameWindow = opengl.gameWindow;
+#endif
+
     crtVAO = opengl.crtVAO;
     framebuffers.insert(std::make_pair("default", Framebuffer()));
     framebuffers.insert(std::make_pair("crt", opengl.framebuffer));
 
     fontCharacters = freetype.loadedCharacters;
 
+#ifndef USE_GLFM
     registerCallbacks();
-    createShaders();
     createCursors();
     createIcon();
+#endif
+    createShaders();
 
     setCursor("default");
 
@@ -67,7 +78,13 @@ Outrospection::Outrospection()
 
     // for good measure, redo UI here
     int width = 0, height = 0;
+    
+#ifdef USE_GLFM
+    glfmGetDisplaySize(gameDisplay, &width, &height);
+#else
     glfwGetFramebufferSize(gameWindow, &width, &height);
+#endif
+
     updateResolution(width, height);
 }
 
@@ -165,6 +182,10 @@ void Outrospection::popOverlay(Layer* overlay)
 
 void Outrospection::captureMouse(const bool doCapture)
 {
+#ifdef USE_GLFM
+    LOG_ERROR("Can't capture mouse in GLFM!");
+#else
+
     if (false) { // TODO make this not hardcoded
         glfwSetInputMode(gameWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
@@ -174,6 +195,7 @@ void Outrospection::captureMouse(const bool doCapture)
 
         //glfwSetCursorPos(gameWindow, SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f);
     }
+#endif
 }
 
 void Outrospection::scheduleWorldTick()
@@ -273,8 +295,12 @@ void Outrospection::runGameLoop()
 
     // swap buffers and poll IO events
     // -------------------------------
+#ifdef USE_GLFM
+    glfmSwapBuffers(gameDisplay);
+#else
     glfwSwapBuffers(gameWindow);
     glfwPollEvents();
+#endif
 }
 
 void Outrospection::runTick()
@@ -287,6 +313,61 @@ void Outrospection::runTick()
     //((GUIScene*)scene)->worldTick();
 }
 
+#ifdef USE_GLFM
+static void onFrame(GLFMDisplay* display)
+{
+    Outrospection::get().runGameLoop();
+}
+
+static void onSurfaceCreated(GLFMDisplay* display, int width, int height)
+{
+    Outrospection::get().updateResolution(width, height);
+}
+
+static void onSurfaceDestroyed(GLFMDisplay* display)
+{
+    WindowCloseEvent event;
+    Outrospection::get().onEvent(event);
+}
+
+static bool onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phase, double x, double y)
+{
+    glm::ivec2 windowRes = Outrospection::get().getWindowResolution();
+
+    // center
+    float xPos = float(x) - (windowRes.x - width) / 2;
+    float yPos = float(y) - (windowRes.y - height) / 2;
+
+    float scaleFactor = width / 1920.f;
+    float scaledX = xPos * (1/scaleFactor);
+    float scaledY = yPos * (1/scaleFactor);
+    
+    {
+        MouseMovedEvent event(scaledX, scaledY);
+        Outrospection::get().onEvent(event);
+    }
+
+    switch (phase)
+    {
+    case GLFMTouchPhaseHover:
+    {
+        return false;
+    }
+    case GLFMTouchPhaseBegan:
+    {
+        MouseButtonPressedEvent event(button);
+        Outrospection::get().onEvent(event);
+        return true;
+    }
+    case GLFMTouchPhaseEnded:
+    {
+        MouseButtonReleasedEvent event(button);
+        Outrospection::get().onEvent(event);
+        return true;
+    }
+    }
+}
+#else
 void Outrospection::registerCallbacks() const
 {
     // Register OpenGL events
@@ -376,6 +457,7 @@ void Outrospection::registerCallbacks() const
     });
     glfwSetErrorCallback(error_callback);
 }
+#endif
 
 void Outrospection::createShaders()
 {
@@ -386,6 +468,7 @@ void Outrospection::createShaders()
     shaders.insert(std::make_pair("glyph",  Shader("sprite", "glyph" )));
 }
 
+#ifndef USE_GLFM
 void Outrospection::createCursors()
 {
     GLFWimage cursorImage;
@@ -419,6 +502,7 @@ void Outrospection::createIcon() const
 
     TextureManager::free(data);
 }
+#endif
 
 void Outrospection::setResolution(glm::vec2 res)
 {
@@ -439,12 +523,20 @@ glm::vec2 Outrospection::getWindowResolution() const
 
 void Outrospection::setWindowText(const std::string& text) const
 {
+#ifdef USE_GLFM
+    LOG_ERROR("Can't set window title in GLFM!");
+#else
     glfwSetWindowTitle(gameWindow, ("Outrospection Engine | " + text).c_str());
+#endif
 }
 
 void Outrospection::setCursor(const std::string& cursorName)
 {
+#ifdef USE_GLFM
+    LOG_ERROR("Can't set cursor in GLFM!");
+#else
     glfwSetCursor(gameWindow, cursors[cursorName]);
+#endif
 }
 
 bool Outrospection::onWindowClose(WindowCloseEvent& e)
@@ -485,6 +577,7 @@ bool Outrospection::onKeyPressed(KeyPressedEvent& e)
 {
     LOG_INFO("pressed key %i", e.getKeyCode());
 
+#ifndef USE_GLFM
     switch(e.getKeyCode())
     {
 #ifdef _DEBUG
@@ -496,6 +589,7 @@ bool Outrospection::onKeyPressed(KeyPressedEvent& e)
         Outrospection::get().toggleFullscreen();
         return true;
     }
+#endif
 
     return false;
 }

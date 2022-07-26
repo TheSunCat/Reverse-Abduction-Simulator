@@ -1,7 +1,13 @@
 #pragma once
 
+#include "Platform.h"
+
+#ifdef USE_GLFM
+#include <glfm>
+#else
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#endif
 
 #include "Constants.h"
 #include "Util.h"
@@ -41,6 +47,22 @@ public:
         return window;
     }
 
+#ifdef USE_GLFM
+    OpenGL(GLFMDisplay* display, std::function<void(GLFMDisplay*,int,int)> onSurfaceCreated, std::function<void(GLFMDisplay*)> onSurfaceDestroyed, std::function<void(GLFMDisplay*)> onFrame)
+    {
+        glfmSetDisplayConfig(display,
+                         GLFMRenderingAPIOpenGLES2,
+                         GLFMColorFormatRGBA8888,
+                         GLFMDepthFormatNone,
+                         GLFMStencilFormatNone,
+                         GLFMMultisampleNone);
+        glfmSetSurfaceCreatedFunc(display, onSurfaceCreated);
+        glfmSetSurfaceResizedFunc(display, onSurfaceCreated);
+        glfmSetSurfaceDestroyedFunc(display, onSurfaceDestroyed);
+        glfmSetRenderFunc(display, onFrame);
+
+
+#else
     OpenGL()
     {
         if (!glfwInit())
@@ -68,6 +90,7 @@ public:
             LOG_ERROR("Failed to initialize GLAD!");
             return;
         }
+#endif
 
         // GL Settings
         glEnable(GL_BLEND);
@@ -103,7 +126,10 @@ public:
 
     GLuint crtVAO = 0;
     Framebuffer framebuffer;
+
+#ifndef USE_GLFM
     GLFWwindow* gameWindow{};
+#endif
 
     DISALLOW_COPY_AND_ASSIGN(OpenGL);
 };

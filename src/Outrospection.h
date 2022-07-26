@@ -44,7 +44,16 @@ public:
         return *instance;
     }
 
+#ifdef USE_GLFM
+    Outrospection(GLFMDisplay* display);
+
+static void onFrame(GLFMDisplay* display);
+static void onSurfaceCreated(GLFMDisplay* display, int width, int height);
+static void onSurfaceDestroyed(GLFMDisplay* display);
+#else
     Outrospection();
+#endif
+
     ~Outrospection();
 
     void stop();
@@ -102,7 +111,9 @@ private:
     float deltaTime = 0;    // time between current frame and last frame
     time_t lastFrame = 0;   // time of last frame
 
+#ifndef USE_GLFM
     GLFWwindow* gameWindow;
+#endif
     bool isFullscreen = false;
 
     std::unordered_map<std::string, Framebuffer> framebuffers;
@@ -124,11 +135,13 @@ private:
 
     void registerCallbacks() const;
     void createShaders();
-    void createCursors();
     void createIcon() const;
-	
+
+#ifndef USE_GLFM
+    void createCursors();
     std::unordered_map<std::string, GLFWcursor*> cursors;
-	
+#endif	
+
     void updateInput();
 
     bool isGamePaused = false;
