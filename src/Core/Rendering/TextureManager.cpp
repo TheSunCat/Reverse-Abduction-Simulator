@@ -1,6 +1,6 @@
 #include "TextureManager.h"
 
-#include <stb_image.h>
+#include <External/stb_image.h>
 #include <string>
 
 #include "Core/Rendering/TickableTexture.h"
