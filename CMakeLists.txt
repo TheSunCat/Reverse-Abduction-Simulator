@@ -17,7 +17,7 @@ project(Outrospection)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(freetype CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # include
@@ -35,10 +35,16 @@ include_directories(lib/json)
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
     add_subdirectory(lib/glfm)
 else()
+    #set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    #set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    #set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    #add_subdirectory(lib/glfw)
+    
     add_subdirectory(lib/glad)
 endif()
 
 set(SOLOUD_BACKEND_SDL2 OFF CACHE BOOL "Set to ON for building SDL2 backend")
+add_compile_definitions(WITH_MINIAUDIO)
 add_subdirectory(lib/soloud/contrib)
 
 
@@ -46,11 +52,11 @@ add_subdirectory(lib/soloud/contrib)
 file(GLOB_RECURSE DIR_SRC src/*.cpp)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
-    add_library(Outrospection SHARED ${DIR_SRC})
+    add_library(Outrospection SHARED ${DIR_SRC} lib/glad/src/glad.c)
 
     set(PLATFORM_DEPS "glfm")
 else()
-    set(CMAKE_EXE_LINKER_FLAGS -static)
+    set(CMAKE_EXE_LINKER_FLAGS) # -static
     add_executable(Outrospection ${DIR_SRC})
     
     set(PLATFORM_DEPS "glad glfw")
@@ -59,10 +65,7 @@ endif()
 
 
 target_link_libraries(Outrospection
-    PUBLIC
-    glad
-    glfw
-
     PRIVATE
-    freetype soloud
-    ${CMAKE_DL_LIBS})
+    freetype soloud glfw glad OpenGL::GL
+    ${CMAKE_DL_LIBS}
+)

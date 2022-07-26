@@ -7,6 +7,3 @@
 [submodule "lib/glfm"]
 	path = lib/glfm
 	url = https://github.com/brackeen/glfm
-[submodule "lib/soloud"]
-	path = lib/soloud
-	url = https://github.com/jarikomppa/soloud
