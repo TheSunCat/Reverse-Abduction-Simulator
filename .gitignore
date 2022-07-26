@@ -4,6 +4,7 @@ save
 .vs/
 _deps/
 CMakeFiles/
+
 Outrospection.dir/
 vcpkg_installed/
 x64/
@@ -12,7 +13,7 @@ x64/
 *.vcxproj*
 *.filters
 *.log
+
 Debug/
-_cmkr_archive_264e4ace/
-cmake_install.cmake
-CMakeCache.txt
+
+Outrospection
