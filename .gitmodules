@@ -1,0 +1,12 @@
+[submodule "lib/glfw"]
+	path = lib/glfw
+	url = https://github.com/glfw/glfw
+[submodule "lib/freetype"]
+	path = lib/freetype
+	url = https://gitlab.freedesktop.org/freetype/freetype
+[submodule "lib/glfm"]
+	path = lib/glfm
+	url = https://github.com/brackeen/glfm
+[submodule "lib/soloud"]
+	path = lib/soloud
+	url = https://github.com/jarikomppa/soloud
