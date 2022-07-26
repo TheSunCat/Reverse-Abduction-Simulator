@@ -7,3 +7,7 @@
 [submodule "lib/glfm"]
 	path = lib/glfm
 	url = https://github.com/brackeen/glfm
+[submodule "lib/soloud"]
+	path = lib/soloud
+	url = https://github.com/danman113/soloud
+	branch = origin/add-miniaudio-to-contrib-cmake
