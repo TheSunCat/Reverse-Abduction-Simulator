@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GUILayer.h"
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 class UIHuman;
 

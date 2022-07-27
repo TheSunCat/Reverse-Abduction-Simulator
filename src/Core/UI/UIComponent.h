@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include <glm/vec2.hpp>
+#include <vec2.hpp>
 
 #include "Outrospection.h"
 #include "Core/Rendering/SimpleTexture.h"

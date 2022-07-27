@@ -1,6 +1,11 @@
 #pragma once
 #include <array>
+
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
+#endif
 
 #include "Types.h"
 

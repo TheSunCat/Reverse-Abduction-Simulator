@@ -8,7 +8,7 @@ void AudioManager::loadSound(const std::string& soundName)
     if (!wave) {
         wave = std::make_unique<SoLoud::Wav>();
 
-        std::string file = "res/SoundData/" + soundName + ".ogg";
+        std::string file = Util::path("SoundData/" + soundName + ".ogg");
 
         wave->load(file.c_str()); // load the file
     }
@@ -45,7 +45,7 @@ void AudioManager::play(const std::string& soundName, float vol, bool loop)
 
         wave = std::make_unique<SoLoud::Wav>();
 
-        std::string file = "res/SoundData/" + soundName + ".ogg";
+        std::string file = Util::path("SoundData/" + soundName + ".ogg");
 
         wave->load(file.c_str()); // load the file
     }
@@ -68,7 +68,7 @@ void AudioManager::stop(const std::string& soundName)
 
 void AudioManager::setSoundVolume(const std::string& sound, float vol)
 {
-    auto f = handles.find(sound); // <- I'm getting the error here
+    auto f = handles.find(sound); 
     if (f == handles.end()) {
         LOG_ERROR("Tried to change volume of nonexistent sound \"%s\"!", sound);
         return;

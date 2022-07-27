@@ -1,7 +1,7 @@
 #pragma once
 #include "Core.h"
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 #include "Types.h"
 
@@ -139,6 +139,8 @@ namespace Util
 
         return hash;
     }
+    
+    std::string path(const std::string& relPath);
 
     bool fileExists(const std::string& file);
     std::vector<std::string> listFiles(const std::string& dir);

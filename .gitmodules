@@ -11,3 +11,6 @@
 	path = lib/soloud
 	url = https://github.com/danman113/soloud
 	branch = origin/add-miniaudio-to-contrib-cmake
+[submodule "lib/glm"]
+	path = lib/glm
+	url = https://github.com/g-truc/glm

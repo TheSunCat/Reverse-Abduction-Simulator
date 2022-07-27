@@ -2,7 +2,11 @@
 
 #include <string>
 
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
+#endif
 
 class SimpleTexture
 {

@@ -3,6 +3,7 @@
 #include <External/stb_image.h>
 #include <string>
 
+#include "Util.h"
 #include "Core/Rendering/TickableTexture.h"
 
 SimpleTexture TextureManager::MissingTexture(-1);
@@ -125,7 +126,7 @@ void TextureManager::tickAllTextures()
 unsigned char* TextureManager::readImageBytes(const std::string& path, int& width, int& height)
 {
     int nrComponents = 0;
-    return stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+    return stbi_load(Util::path(path).c_str(), &width, &height, &nrComponents, 0);
 }
 
 void TextureManager::free(unsigned char* data)

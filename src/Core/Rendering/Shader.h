@@ -3,8 +3,13 @@
 #include <unordered_map>
 #include <string>
 
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
-#include <glm/glm.hpp>
+#endif
+
+#include <glm.hpp>
 
 class Camera;
 

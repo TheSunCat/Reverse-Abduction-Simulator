@@ -58,7 +58,7 @@ public:
         }
 
         FT_Face face;
-        if (FT_New_Face(ft, "res/ObjectData/UI/octopuzzlerType.otf", 0, &face))
+        if (FT_New_Face(ft, Util::path("ObjectData/UI/octopuzzlerType.otf").c_str(), 0, &face))
         {
             LOG_ERROR("Failed to load res/ObjectData/UI/octopuzzlerType.otf!");
             return;

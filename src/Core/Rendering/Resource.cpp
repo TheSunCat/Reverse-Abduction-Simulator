@@ -1,6 +1,8 @@
 #include "Resource.h"
 
-Resource::Resource(const std::string& path, const std::string& name) : fullPath("res/" + path + name)
+#include "Util.h"
+
+Resource::Resource(const std::string& path, const std::string& name) : fullPath(Util::path(path + name))
 {
 }
 

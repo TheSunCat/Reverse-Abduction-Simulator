@@ -20,7 +20,6 @@
         #define PLATFORM_IOS
         #warning "Building on iOS!"
         
-        #define USE_GLFM
     #elif TARGET_OS_MAC == 1
         #define PLATFORM_MACOS
     #else
@@ -30,10 +29,12 @@
 #elif defined(__ANDROID__)
     #define PLATFORM_ANDROID
     #warning "Building on Android!"
-    #define USE_GLFM
 
 #elif defined(__linux__)
     #define PLATFORM_LINUX
+
+#elif defined(__EMSCRIPTEN__)
+    #define PLATFORM_EMSCRIPTEN
 
 #else
     #error "Unknown platform!"

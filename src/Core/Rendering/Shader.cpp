@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-#include <glm/ext/matrix_clip_space.hpp>
+#include <ext/matrix_clip_space.hpp>
 
 #include "Util.h"
 
@@ -16,8 +16,8 @@ Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
     std::string fragmentPath("ShaderData/" + fName + ".frag");
 
     // read shader code from file
-    std::string vertexCode = Util::readAllBytes("res/" + vertexPath);
-    std::string fragmentCode = Util::readAllBytes("res/" + fragmentPath);
+    std::string vertexCode = Util::readAllBytes(vertexPath);
+    std::string fragmentCode = Util::readAllBytes(fragmentPath);
 
     const char* vCode = vertexCode.c_str();
     const char* fCode = fragmentCode.c_str();

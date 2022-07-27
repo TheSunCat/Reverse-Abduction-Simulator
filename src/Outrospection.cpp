@@ -5,8 +5,13 @@
 #include <chrono>
 #include <csignal>
 
-#include <glm/ext/matrix_clip_space.hpp>
+#include <ext/matrix_clip_space.hpp>
+
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include "GLFW/glfw3.h"
+#endif
 
 #include "Util.h"
 #include "Core/Layer.h"
@@ -27,7 +32,7 @@
 Outrospection* Outrospection::instance = nullptr;
 
 #ifdef USE_GLFM
-Outrospection::Outrospection(GLFMDisplay* display) : openGL(display, onSurfaceCreated, onSurfaceDestroyed, onFrame, onTouch)
+Outrospection::Outrospection(GLFMDisplay* display) : opengl(display, onSurfaceCreated, onSurfaceDestroyed, onFrame, onTouch)
 #else
 Outrospection::Outrospection()
 #endif
@@ -92,7 +97,9 @@ Outrospection::~Outrospection()
 {
     LOG_INFO("Terminating engine...");
 
+#ifndef USE_GLFM
     glfwTerminate();
+#endif
 
     //consoleThread.stop();
     loggerThread.stop();
@@ -121,9 +128,10 @@ void Outrospection::run()
 
         runGameLoop();
 
+#ifndef USE_GLFM
         if (glfwWindowShouldClose(gameWindow))
             running = false;
-
+#endif
 
         currentTimeMillis = Util::currentTimeMillis();
         time_t frameTime = currentTimeMillis - lastFrame;
@@ -203,6 +211,7 @@ void Outrospection::scheduleWorldTick()
     lastTick = Util::currentTimeMillis() - 5000;
 }
 
+#ifndef USE_GLFM
 void Outrospection::toggleFullscreen()
 {
     auto monitor = glfwGetPrimaryMonitor();
@@ -231,6 +240,7 @@ void Outrospection::toggleFullscreen()
 
     isFullscreen = !isFullscreen;
 }
+#endif
 
 void Outrospection::runGameLoop()
 {
@@ -314,25 +324,35 @@ void Outrospection::runTick()
 }
 
 #ifdef USE_GLFM
-static void onFrame(GLFMDisplay* display)
+void Outrospection::onFrame(GLFMDisplay* display)
 {
     Outrospection::get().runGameLoop();
 }
 
-static void onSurfaceCreated(GLFMDisplay* display, int width, int height)
+void Outrospection::onSurfaceCreated(GLFMDisplay* display, int width, int height)
 {
     Outrospection::get().updateResolution(width, height);
 }
 
-static void onSurfaceDestroyed(GLFMDisplay* display)
+void Outrospection::onSurfaceDestroyed(GLFMDisplay* display)
 {
     WindowCloseEvent event;
     Outrospection::get().onEvent(event);
 }
 
-static bool onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phase, double x, double y)
+bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phase, double x, double y)
 {
     glm::ivec2 windowRes = Outrospection::get().getWindowResolution();
+    float targetAspectRatio = 1920 / 1080.f;
+
+    float width = windowRes.x;
+    float height = (width / targetAspectRatio + 0.5f);
+
+    if (height > windowRes.y) // pillarbox
+    {
+        height = windowRes.y;
+        width = (height * targetAspectRatio + 0.5f);
+    }
 
     // center
     float xPos = float(x) - (windowRes.x - width) / 2;
@@ -355,13 +375,13 @@ static bool onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phase, doubl
     }
     case GLFMTouchPhaseBegan:
     {
-        MouseButtonPressedEvent event(button);
+        MouseButtonPressedEvent event(0);
         Outrospection::get().onEvent(event);
         return true;
     }
     case GLFMTouchPhaseEnded:
     {
-        MouseButtonReleasedEvent event(button);
+        MouseButtonReleasedEvent event(0);
         Outrospection::get().onEvent(event);
         return true;
     }
@@ -474,17 +494,17 @@ void Outrospection::createCursors()
     GLFWimage cursorImage;
     int width = 10, height = 10;
 
-    unsigned char* data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse.png", width, height);
+    unsigned char* data = TextureManager::readImageBytes("ObjectData/Textures/mouse.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["default"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 
-    data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse_hover.png", width, height);
+    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_hover.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["hovering"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 
-    data = TextureManager::readImageBytes("res/ObjectData/Textures/mouse_click.png", width, height);
+    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_click.png", width, height);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["clicking"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
@@ -495,7 +515,7 @@ void Outrospection::createIcon() const
     GLFWimage image;
     int width = 10, height = 10;
 
-    unsigned char* data = TextureManager::readImageBytes("res/ObjectData/icon.png", width, height);
+    unsigned char* data = TextureManager::readImageBytes("ObjectData/icon.png", width, height);
     image.pixels = data; image.width = width; image.height = height;
 
     glfwSetWindowIcon(gameWindow, 1, &image);

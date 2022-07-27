@@ -4,6 +4,7 @@
 #include <map>
 #include <sstream>
 #include <fstream>
+
 #ifndef PLATFORM_XP
 #include <filesystem>
 #else
@@ -12,8 +13,13 @@
 #include <strsafe.h>
 #endif
 
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
-#include <glm/common.hpp>
+#endif
+
+#include <common.hpp>
 #include <External/stb_image.h>
 #include <External/fast_float.h>
 
@@ -123,11 +129,20 @@ void Util::doLater(std::function<void()> func, time_t waitTime)
     Outrospection::get().futureFunctions.emplace_back(func, currentTimeMillis(), waitTime);
 }
 
+std::string Util::path(const std::string& relPath)
+{
+#ifdef USE_GLFM
+    return "res/" + relPath;
+#else
+    return "res/" + relPath;
+#endif
+}
+
 bool Util::fileExists(const std::string& file)
 {
-    std::string fullPath(file);
+    std::string fullPath = Util::path(file);
 
-    LOG("Checking file %s", fullPath);
+    std::cout << "Checking file " << fullPath << std::endl;
 
 #ifndef PLATFORM_XP
     return std::filesystem::exists(fullPath);
@@ -138,10 +153,12 @@ bool Util::fileExists(const std::string& file)
 
 std::vector<std::string> Util::listFiles(const std::string& dir)
 {
+    std::string fullDir = Util::path(dir);
+
     std::vector<std::string> ret;
 
 #ifndef PLATFORM_XP
-    for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+    for (const auto& entry : std::filesystem::directory_iterator(fullDir)) {
         auto str = entry.path().string();
         std::replace(str.begin(), str.end(), '\\', '/');
 
@@ -157,7 +174,7 @@ std::vector<std::string> Util::listFiles(const std::string& dir)
 
     // Prepare string for use with FindFile functions.  First, copy the
     // string to a buffer, then append '\*' to the directory name.
-    StringCchCopy(szDir, MAX_PATH, dir.c_str());
+    StringCchCopy(szDir, MAX_PATH, fullDir.c_str());
     StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
 
     // Find the first file in the directory.
@@ -183,7 +200,7 @@ std::vector<std::string> Util::listFiles(const std::string& dir)
 
 std::string Util::readAllBytes(const std::string& file)
 {
-    std::string fullPath(file);
+    std::string fullPath = Util::path(file);
     
     std::ifstream fileStream;
 
@@ -234,7 +251,7 @@ std::string Util::vecToStr(const glm::vec2& vec)
 unsigned char* Util::imageDataFromFile(const char* path, const std::string& directory, int* widthOut, int* heightOut)
 {
     std::string filename = std::string(path);
-    filename = directory + '/' + filename;
+    filename = Util::path(directory + '/' + filename);
 
     int nrComponents = 0;
     unsigned char* data = stbi_load(filename.c_str(), widthOut, heightOut, &nrComponents, 0);

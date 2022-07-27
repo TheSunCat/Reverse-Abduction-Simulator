@@ -1,9 +1,14 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
+#include <glm.hpp>
+
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#endif
 
 #include "Core.h"
 #include "Util.h"

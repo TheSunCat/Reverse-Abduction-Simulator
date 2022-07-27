@@ -1,9 +1,9 @@
 #pragma once
 
 #include <json.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <glm.hpp>
+#include <gtc/quaternion.hpp>
+#include <gtx/quaternion.hpp>
 
 #include "Core/Rendering/Resource.h"
 #include "Core/Rendering/SimpleTexture.h"

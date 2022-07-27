@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Platform.h"
-
 #ifdef USE_GLFM
-#include <glfm>
+#include <glfm.h>
 #else
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -16,6 +14,24 @@
 class OpenGL
 {
 public:
+
+#ifdef USE_GLFM
+    OpenGL(GLFMDisplay* display, GLFMSurfaceCreatedFunc onSurfaceCreated, GLFMSurfaceDestroyedFunc onSurfaceDestroyed, GLFMRenderFunc onFrame, GLFMTouchFunc onTouch)
+    {
+        glfmSetDisplayConfig(display,
+                         GLFMRenderingAPIOpenGLES2,
+                         GLFMColorFormatRGBA8888,
+                         GLFMDepthFormatNone,
+                         GLFMStencilFormatNone,
+                         GLFMMultisampleNone);
+        glfmSetSurfaceCreatedFunc(display, onSurfaceCreated);
+        glfmSetSurfaceResizedFunc(display, onSurfaceCreated);
+        glfmSetSurfaceDestroyedFunc(display, onSurfaceDestroyed);
+        glfmSetRenderFunc(display, onFrame);
+        glfmSetTouchFunc(display, onTouch);
+
+#else
+
     GLFWwindow* createGameWindow(int width, int height, const std::string& name, GLFWmonitor* monitor, GLFWwindow* windowShare)
     {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -47,22 +63,6 @@ public:
         return window;
     }
 
-#ifdef USE_GLFM
-    OpenGL(GLFMDisplay* display, std::function<void(GLFMDisplay*,int,int)> onSurfaceCreated, std::function<void(GLFMDisplay*)> onSurfaceDestroyed, std::function<void(GLFMDisplay*)> onFrame)
-    {
-        glfmSetDisplayConfig(display,
-                         GLFMRenderingAPIOpenGLES2,
-                         GLFMColorFormatRGBA8888,
-                         GLFMDepthFormatNone,
-                         GLFMStencilFormatNone,
-                         GLFMMultisampleNone);
-        glfmSetSurfaceCreatedFunc(display, onSurfaceCreated);
-        glfmSetSurfaceResizedFunc(display, onSurfaceCreated);
-        glfmSetSurfaceDestroyedFunc(display, onSurfaceDestroyed);
-        glfmSetRenderFunc(display, onFrame);
-
-
-#else
     OpenGL()
     {
         if (!glfwInit())
@@ -122,6 +122,8 @@ public:
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
         
         framebuffer = Framebuffer(640, 480);
+
+        inited = true;
     }
 
     GLuint crtVAO = 0;
@@ -130,6 +132,8 @@ public:
 #ifndef USE_GLFM
     GLFWwindow* gameWindow{};
 #endif
+
+    bool inited = false;
 
     DISALLOW_COPY_AND_ASSIGN(OpenGL);
 };

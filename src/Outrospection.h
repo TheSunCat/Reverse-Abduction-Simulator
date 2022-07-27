@@ -2,7 +2,7 @@
 
 #include "Core.h"
 
-#include <glm/vec2.hpp>
+#include <vec2.hpp>
 
 #include "Types.h"
 #include "Constants.h"
@@ -50,6 +50,8 @@ public:
 static void onFrame(GLFMDisplay* display);
 static void onSurfaceCreated(GLFMDisplay* display, int width, int height);
 static void onSurfaceDestroyed(GLFMDisplay* display);
+static bool onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phase, double x, double y);
+
 #else
     Outrospection();
 #endif
@@ -59,6 +61,8 @@ static void onSurfaceDestroyed(GLFMDisplay* display);
     void stop();
 
     void run();
+    void runGameLoop();
+
     void onEvent(Event& e);
 
     void pushLayer(Layer* layer);
@@ -100,7 +104,6 @@ static void onSurfaceDestroyed(GLFMDisplay* display);
 
     DISALLOW_COPY_AND_ASSIGN(Outrospection);
 private:
-    void runGameLoop();
     void runTick();
     time_t lastTick = 0;
 
@@ -111,7 +114,9 @@ private:
     float deltaTime = 0;    // time between current frame and last frame
     time_t lastFrame = 0;   // time of last frame
 
-#ifndef USE_GLFM
+#ifdef USE_GLFM
+    GLFMDisplay* gameDisplay;
+#else
     GLFWwindow* gameWindow;
 #endif
     bool isFullscreen = false;

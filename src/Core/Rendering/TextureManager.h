@@ -3,7 +3,11 @@
 
 #include <unordered_map>
 
+#ifdef USE_GLFM
+#include "glfm.h"
+#else
 #include <glad/glad.h>
+#endif
 
 #include "Resource.h"
 #include "Types.h"

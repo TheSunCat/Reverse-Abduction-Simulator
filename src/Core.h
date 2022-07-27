@@ -125,6 +125,8 @@ private:
 
 inline Queue<std::function<void()>> loggerQueue;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-security"
 // TODO this function is EVIL. segfault on Linux. Why??
 template <typename T>
 static decltype(auto) printf_transform(T const& arg)
@@ -139,6 +141,7 @@ static decltype(auto) printf_transform(T const& arg)
         return arg;
     }
 }
+#pragma GCC diagnostic pop
 
 inline auto thread_safe_time(const std::time_t& time) {
     static std::mutex mut;
