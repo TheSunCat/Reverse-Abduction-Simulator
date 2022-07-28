@@ -155,7 +155,7 @@ private:
 
     static Outrospection* instance;
 
-    jthread loggerThread{
+    /* TODO emscripten jthread loggerThread{
         [&] {
             using namespace std::chrono_literals;
 
@@ -171,7 +171,7 @@ private:
 
             std::this_thread::sleep_for(1ms);
         }
-    };
+    };*/
 
 public:
     static int loadSave();

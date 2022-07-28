@@ -42,7 +42,7 @@ Outrospection::Outrospection()
     // seed rand()
     srand(time(NULL));
 
-    loggerThread.start();
+    // TODO emscripten loggerThread.start();
     // TODO consoleThread.start();
     audioManager.init({
          "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "explode", "explodeFinal", "end",
@@ -102,7 +102,7 @@ Outrospection::~Outrospection()
 #endif
 
     //consoleThread.stop();
-    loggerThread.stop();
+    // TODO emscripten loggerThread.stop();
 
     std::cout << "Concluded the termination of the engine." << std::endl;
 }
