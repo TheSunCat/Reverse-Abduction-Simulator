@@ -174,12 +174,13 @@ struct smart_printf {
     }
 };
 
-#define LOG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { */std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__));/* })*/
+#define LOG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { */std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__)); putchar('\n')/* })*/
 
 #ifdef _DEBUG 
 #define LOG_DEBUG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] {*/ CHANGE_COLOR(35); /* set color to magenta */\
         std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__)); \
-        CHANGE_COLOR(0);/*})*/
+        putchar('\n'); \
+        CHANGE_COLOR(0)/*})*/
 
 #define PROFILE Util::Timer timer_##__COUNTER__(__func__)
 #else

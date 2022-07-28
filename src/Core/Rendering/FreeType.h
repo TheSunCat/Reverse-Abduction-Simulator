@@ -22,14 +22,20 @@ public:
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
+#ifdef USE_GLFM
+        constexpr GLint internalFormat = GL_ALPHA;
+#else
+        constexpr GLint internalFormat = GL_RED;
+#endif
+
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_ALPHA,
+            internalFormat,
             face->glyph->bitmap.width,
             face->glyph->bitmap.rows,
             0,
-            GL_ALPHA,
+            internalFormat,
             GL_UNSIGNED_BYTE,
             face->glyph->bitmap.buffer
         );

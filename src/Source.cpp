@@ -1,5 +1,6 @@
 #include "Outrospection.h"
 
+#ifdef USE_GLFM
 static void onReady(GLFMDisplay *display, int width, int height) {
     std::cout << "Time to leak some memory!" << std::endl;
 
@@ -7,7 +8,6 @@ static void onReady(GLFMDisplay *display, int width, int height) {
     // leak that memory!!
 }
 
-#ifdef USE_GLFM
 void glfmMain(GLFMDisplay *display) {
     //int argc = 0;
     //char** argv = "Outrospection";
