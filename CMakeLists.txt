@@ -72,7 +72,8 @@ file(GLOB_RECURSE DIR_SRC src/*.cpp)
 if(GLFM)
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
     add_executable(Outrospection ${DIR_SRC})
-    set_target_properties(Outrospection PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH --preload-file res")
+
+    set_target_properties(Outrospection PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res")
 
     set(PLATFORM_DEPS "glfm")
 else()
@@ -82,7 +83,12 @@ else()
     set(PLATFORM_DEPS "glad glfw OpenGL::GL")
 endif()
 
-add_compile_options(-Wno-format-security)
+set_target_properties(Outrospection PROPERTIES COMPILE_FLAGS -Wno-format-security)
+
+# symlink res folder
+add_custom_command(TARGET Outrospection PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+                   ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
 target_link_libraries(Outrospection
     PRIVATE

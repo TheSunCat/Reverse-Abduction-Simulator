@@ -25,11 +25,11 @@ public:
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RED,
+            GL_ALPHA,
             face->glyph->bitmap.width,
             face->glyph->bitmap.rows,
             0,
-            GL_RED,
+            GL_ALPHA,
             GL_UNSIGNED_BYTE,
             face->glyph->bitmap.buffer
         );
@@ -53,14 +53,14 @@ public:
         FT_Library ft;
         if (FT_Init_FreeType(&ft))
         {
-            LOG_ERROR("Failed to initialize FreeType!");
+            std::cout << "Failed to initialize FreeType!";
             return;
         }
 
         FT_Face face;
         if (FT_New_Face(ft, Util::path("ObjectData/UI/octopuzzlerType.otf").c_str(), 0, &face))
         {
-            LOG_ERROR("Failed to load res/ObjectData/UI/octopuzzlerType.otf!");
+            std::cout << "Failed to load res/ObjectData/UI/octopuzzlerType.otf!";
             return;
         }
 

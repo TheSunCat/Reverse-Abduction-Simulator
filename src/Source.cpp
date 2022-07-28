@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 
 #ifdef USE_GLFM
     glfmSetDisplayConfig(display,
-                         GLFMRenderingAPIOpenGLES2,
+                         GLFMRenderingAPIOpenGLES3,
                          GLFMColorFormatRGBA8888,
                          GLFMDepthFormatNone,
                          GLFMStencilFormatNone,

@@ -10,9 +10,18 @@
 Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
 {
     std::string vName(vertexName);
+
+#ifdef USE_GLFM
+    vName = "ES_" + vName;
+#endif
+
     std::string vertexPath("ShaderData/" + vName + ".vert");
 
     std::string fName(fragmentName);
+#ifdef USE_GLFM
+    fName = "ES_" + fName;
+#endif
+
     std::string fragmentPath("ShaderData/" + fName + ".frag");
 
     // read shader code from file

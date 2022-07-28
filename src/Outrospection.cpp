@@ -386,6 +386,8 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
         return true;
     }
     }
+
+    return false;
 }
 #else
 void Outrospection::registerCallbacks() const

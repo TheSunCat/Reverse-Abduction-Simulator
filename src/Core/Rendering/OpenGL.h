@@ -19,7 +19,7 @@ public:
     OpenGL(GLFMDisplay* display, GLFMSurfaceCreatedFunc onSurfaceCreated, GLFMSurfaceDestroyedFunc onSurfaceDestroyed, GLFMRenderFunc onFrame, GLFMTouchFunc onTouch)
     {
         glfmSetDisplayConfig(display,
-                         GLFMRenderingAPIOpenGLES2,
+                         GLFMRenderingAPIOpenGLES3,
                          GLFMColorFormatRGBA8888,
                          GLFMDepthFormatNone,
                          GLFMStencilFormatNone,
