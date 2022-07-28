@@ -79,6 +79,8 @@ void GUIStats::tick()
         o.audioManager.play("timesUp");
 
         Util::doLater([&o] () {
+            std::cout << "Time's up!" << std::endl;
+
             ((GUIPostGame*)o.layerPtrs["postGame"])->start(((GUIPeople*)o.layerPtrs["people"])->humanCount() >= 50);
         }, 4000);
     }

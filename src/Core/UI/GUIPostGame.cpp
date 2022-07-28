@@ -109,6 +109,8 @@ void GUIPostGame::draw() const
 
 void GUIPostGame::start(bool goodEnding)
 {
+    std::cout << "Started postgame!" << std::endl;
+
     // TODO this code is bad, eh
 
     auto& o = Outrospection::get();

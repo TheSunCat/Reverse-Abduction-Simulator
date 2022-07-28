@@ -91,6 +91,8 @@ Outrospection::Outrospection()
 #endif
 
     updateResolution(width, height);
+
+    lastFrame = Util::currentTimeMillis();
 }
 
 Outrospection::~Outrospection()
@@ -122,9 +124,9 @@ void Outrospection::run()
     deltaTime = 1.0f / 60.0f; 
     while (running)
     {
-        currentTimeMillis = Util::currentTimeMillis();
-        deltaTime = float(currentTimeMillis - lastFrame) / 1000.0f;
-        lastFrame = currentTimeMillis;
+        //currentTimeMillis = Util::currentTimeMillis();
+        //deltaTime = float(currentTimeMillis - lastFrame) / 1000.0f;
+        //lastFrame = currentTimeMillis;
 
         runGameLoop();
 
@@ -244,6 +246,11 @@ void Outrospection::toggleFullscreen()
 
 void Outrospection::runGameLoop()
 {
+    currentTimeMillis = Util::currentTimeMillis();
+    deltaTime = float(currentTimeMillis - lastFrame) / 1000.0f;
+    lastFrame = currentTimeMillis;
+
+
     // Update game world
     {
         // fetch input into simplified controller class
