@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.18)
 
 if(EMSCRIPTEN OR CMAKE_SYSTEM_NAME MATCHES "Android")
     set(GLFM "1")
