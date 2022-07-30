@@ -122,7 +122,6 @@ private:
     bool isFullscreen = false;
 
     std::unordered_map<std::string, Framebuffer> framebuffers;
-    GLuint crtVAO;
 
     // camera stuff
     //Camera camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));

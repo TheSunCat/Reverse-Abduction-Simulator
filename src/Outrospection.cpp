@@ -40,7 +40,7 @@ Outrospection::Outrospection()
     instance = this;
 
     // seed rand()
-    srand(time(NULL));
+    srand(time(nullptr));
 
     // TODO emscripten loggerThread.start();
     // TODO consoleThread.start();
@@ -55,9 +55,7 @@ Outrospection::Outrospection()
     gameWindow = opengl.gameWindow;
 #endif
 
-    crtVAO = opengl.crtVAO;
     framebuffers.insert(std::make_pair("default", Framebuffer()));
-    framebuffers.insert(std::make_pair("crt", opengl.framebuffer));
 
     fontCharacters = freetype.loadedCharacters;
 
@@ -292,9 +290,9 @@ void Outrospection::runGameLoop()
         framebuffers["default"].bind();
         glClear(GL_COLOR_BUFFER_BIT);
         
-        glBindVertexArray(crtVAO);
-        framebuffers["crt"].bindTexture();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glBindVertexArray(crtVAO);
+        //framebuffers["crt"].bindTexture();
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         shaders["screen"].use();
         // draw UI

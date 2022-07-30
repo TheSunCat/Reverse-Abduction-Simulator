@@ -28,7 +28,6 @@
 
 #elif defined(__ANDROID__)
     #define PLATFORM_ANDROID
-    #warning "Building on Android!"
 
 #elif defined(__linux__)
     #define PLATFORM_LINUX

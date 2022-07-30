@@ -6,7 +6,7 @@ if(EMSCRIPTEN OR CMAKE_SYSTEM_NAME MATCHES "Android")
 endif()
 
 message(CMAKE_SYSTEM_NAME="${CMAKE_SYSTEM_NAME}")
-message(EMSCRIPTEN="${EMSCRIPTEN}")
+set(CMAKE_VERBOSE_MAKEFILE on)
 
 # add vcpkg
 include(FetchContent)
@@ -29,7 +29,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
 else()
     message("Finding packages for desktop...")
 
-    find_package(freetype CONFIG REQUIRED)
+    add_subdirectory(lib/freetype)
+
+    #find_package(freetype CONFIG REQUIRED)
     #find_package(OpenGL REQUIRED)
 endif()
 
@@ -66,24 +68,8 @@ add_subdirectory(lib/soloud/contrib)
 
 add_subdirectory(lib/glm)
 
-
 # executable
 file(GLOB_RECURSE DIR_SRC src/*.cpp)
-
-if(GLFM)
-    add_executable(Outrospection ${DIR_SRC})
-
-    set(PLATFORM_DEPS "glfm")
-    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "")
-else()
-    set(CMAKE_EXE_LINKER_FLAGS) # -static
-    add_executable(Outrospection ${DIR_SRC})
-    
-    set(PLATFORM_DEPS "glfw")
-    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "glad")
-endif()
-
-set_target_properties(Outrospection PROPERTIES COMPILE_FLAGS -Wno-format-security)
 
 if(EMSCRIPTEN)
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
@@ -120,22 +106,43 @@ if(EMSCRIPTEN)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in "${EMSCRIPTEN_SHELL_HTML}")
 
     set_target_properties(Outrospection PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res --shell-file ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in")
+
+    add_executable(Outrospection ${DIR_SRC})
+elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+    message("Matched Android system name! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    add_library(Outrospection SHARED ${DIR_SRC})
+endif() # TODO iOS
+
+if(GLFM)
+    set(PLATFORM_DEPS "glfm")
+    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "")
+else()
+    set(CMAKE_EXE_LINKER_FLAGS) # -static
+    add_executable(Outrospection ${DIR_SRC})
+
+    set(PLATFORM_DEPS "glfw")
+    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "glad")
 endif()
+
+set_target_properties(Outrospection PROPERTIES COMPILE_FLAGS "-fPIC -Wno-format-security")
 
 # symlink res folder
 add_custom_command(TARGET Outrospection PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E create_symlink
                    ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
+find_library(GLESv3-lib GLESv3)
 
 # for some reason this fails if I don't put GLFW and GLAD in separate lines. WHAT.
 target_link_libraries(Outrospection
+
     PRIVATE
     freetype soloud
     
     PUBLIC
     ${PLATFORM_DEPS}
     ${PLATFORM_DEPS_2_ELECTRIC_BOOGALOO}
+    GLESv3
     
     PRIVATE
     ${CMAKE_DL_LIBS}

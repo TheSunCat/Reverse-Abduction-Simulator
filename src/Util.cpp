@@ -131,8 +131,8 @@ void Util::doLater(std::function<void()> func, time_t waitTime)
 
 std::string Util::path(const std::string& relPath)
 {
-#ifdef USE_GLFM
-    return "res/" + relPath;
+#ifdef PLATFORM_ANDROID
+    return "assets/" + relPath;
 #else
     return "res/" + relPath;
 #endif
@@ -144,10 +144,18 @@ bool Util::fileExists(const std::string& file)
 
     std::cout << "Checking file " << fullPath << std::endl;
 
-#ifndef PLATFORM_XP
+#ifndef PLATFORM_ANDROID
     return std::filesystem::exists(fullPath);
 #else
-    return PathFileExistsA(fullPath.c_str());
+    // TODO bad code but I want Android building ok
+
+    std::ifstream iFile;
+    iFile.open(fullPath);
+
+    if(iFile)
+        return true;
+    else
+        return false;
 #endif
 }
 
@@ -156,6 +164,11 @@ std::vector<std::string> Util::listFiles(const std::string& dir)
     std::string fullDir = Util::path(dir);
 
     std::vector<std::string> ret;
+
+    // TODO Android doesn't support std::filesystem::directory_iterator
+    //assert(false);
+    ret.push_back(dir);
+    return ret;
 
 #ifndef PLATFORM_XP
     for (const auto& entry : std::filesystem::directory_iterator(fullDir)) {
