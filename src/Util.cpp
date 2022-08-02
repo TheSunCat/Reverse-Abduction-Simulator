@@ -655,8 +655,29 @@ int Util::stoi(const std::string_view& str)
 
 void Util::openLink(const std::string& link)
 {
+    LOG("Opening URL %s...", link);
+
 #ifdef PLATFORM_WINDOWS
     ShellExecute(0, 0, link.c_str(), 0, 0, SW_SHOW);
+#elif defined(PLATFORM_ANDROID)
+    ANativeActivity* activity = glfmAndroidGetActivity();
+
+    JNIEnv* env;
+    activity->vm->AttachCurrentThread(&env, nullptr);
+    jstring url_string = env->NewStringUTF(link.c_str());
+    jclass uri_class = env->FindClass("android/net/Uri");
+    jmethodID uri_parse = env->GetStaticMethodID(uri_class, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
+    jobject uri = env->CallStaticObjectMethod(uri_class, uri_parse, url_string);
+    jclass intent_class = env->FindClass("android/content/Intent");
+    jfieldID action_view_id = env->GetStaticFieldID(intent_class, "ACTION_VIEW", "Ljava/lang/String;");
+    jobject action_view = env->GetStaticObjectField(intent_class, action_view_id);
+    jmethodID new_intent = env->GetMethodID(intent_class, "<init>", "(Ljava/lang/String;Landroid/net/Uri;)V");
+    jobject intent = env->AllocObject(intent_class);
+    env->CallVoidMethod(intent, new_intent, action_view, uri);
+    jclass activity_class = env->FindClass("android/app/Activity");
+    jmethodID start_activity = env->GetMethodID(activity_class, "startActivity", "(Landroid/content/Intent;)V");
+    env->CallVoidMethod(activity->clazz, start_activity, intent);
+    //activity->vm->DetachCurrentThread();
 #else
     std::string command = "xdg-open " + link;
     system(command.c_str());

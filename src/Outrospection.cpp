@@ -111,7 +111,11 @@ Outrospection::~Outrospection()
 
 void Outrospection::stop()
 {
+#ifdef USE_GLFM
+    abort(); // TODO ugly but works, since GLFM is event-driven and provides no way to stop :/
+#else
     running = false;
+#endif
 }
 
 void Outrospection::run()
@@ -384,6 +388,7 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
         Outrospection::get().onEvent(event);
         return true;
     }
+    case GLFMTouchPhaseCancelled:
     case GLFMTouchPhaseEnded:
     {
         MouseButtonReleasedEvent event(0);

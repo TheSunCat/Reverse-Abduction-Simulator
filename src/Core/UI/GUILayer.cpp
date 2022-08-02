@@ -53,6 +53,8 @@ bool GUILayer::onMousePressed(MouseButtonPressedEvent& event)
 {
     for (UIButton* button : buttons)
     {
+        button->tick();
+
         if (button->hovered && button->onClick)
         {
             Outrospection::get().setCursor("clicking");
