@@ -39,6 +39,8 @@ Outrospection::Outrospection()
 {
     instance = this;
 
+    LOG("Initializing engine...");
+
     // seed rand()
     srand(time(nullptr));
 
@@ -119,19 +121,16 @@ void Outrospection::run()
     running = true;
 
     lastFrame = Util::currentTimeMillis(); // I miss java
-    deltaTime = 1.0f / 60.0f; 
+    deltaTime = 1.0f / 60.0f;
+
+    // GLFM calls this by itself
+#ifndef USE_GLFM
     while (running)
     {
-        //currentTimeMillis = Util::currentTimeMillis();
-        //deltaTime = float(currentTimeMillis - lastFrame) / 1000.0f;
-        //lastFrame = currentTimeMillis;
-
         runGameLoop();
 
-#ifndef USE_GLFM
         if (glfwWindowShouldClose(gameWindow))
             running = false;
-#endif
 
         currentTimeMillis = Util::currentTimeMillis();
         time_t frameTime = currentTimeMillis - lastFrame;
@@ -144,6 +143,7 @@ void Outrospection::run()
             std::this_thread::sleep_for(m);
         }
     }
+#endif
 }
 
 void Outrospection::onEvent(Event& e)
@@ -499,19 +499,19 @@ void Outrospection::createShaders()
 void Outrospection::createCursors()
 {
     GLFWimage cursorImage;
-    int width = 10, height = 10;
+    int width = 10, height = 10, nrComponents = 4;
 
-    unsigned char* data = TextureManager::readImageBytes("ObjectData/Textures/mouse.png", width, height);
+    unsigned char* data = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse", "png"}, width, height, nrComponents);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["default"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 
-    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_hover.png", width, height);
+    data = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse_hover", "png"}, width, height, nrComponents);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["hovering"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
 
-    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_click.png", width, height);
+    data = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse_click", "png"}, width, height, nrComponents);
     cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
     cursors["clicking"] = glfwCreateCursor(&cursorImage, 0, 0);
     TextureManager::free(data);
@@ -520,9 +520,9 @@ void Outrospection::createCursors()
 void Outrospection::createIcon() const
 {
     GLFWimage image;
-    int width = 10, height = 10;
+    int width = 10, height = 10, nrComponents = 4;
 
-    unsigned char* data = TextureManager::readImageBytes("ObjectData/icon.png", width, height);
+    unsigned char* data = TextureManager::readImageBytes({"ObjectData/", "icon", "png"}, width, height, nrComponents);
     image.pixels = data; image.width = width; image.height = height;
 
     glfwSetWindowIcon(gameWindow, 1, &image);
@@ -635,7 +635,7 @@ void Outrospection::updateInput()
 {
     
 }
-
+/* TODO
 int Outrospection::loadSave()
 {
 #ifdef _DEBUG // don't load save data on Debug mode
@@ -674,3 +674,4 @@ void Outrospection::writeSave(int number)
     saveFile << "OSAV" << number;
     saveFile.close();
 }
+*/

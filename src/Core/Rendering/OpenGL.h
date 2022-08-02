@@ -124,6 +124,8 @@ public:
         framebuffer = Framebuffer(640, 480);
 
         inited = true;
+
+        LOG("Successfully initialized OpenGL!");
     }
 
     GLuint crtVAO = 0;

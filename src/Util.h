@@ -142,16 +142,10 @@ namespace Util
     
     std::string path(const std::string& relPath);
 
-    bool fileExists(const std::string& file);
-    std::vector<std::string> listFiles(const std::string& dir);
-    std::string readAllBytes(const std::string& file);
-
     glm::vec3 rotToVec3(float yaw, float pitch = 0);
 
     std::string vecToStr(const glm::vec3& vec);
     std::string vecToStr(const glm::vec2& vec);
-
-    unsigned char* imageDataFromFile(const char* path, const std::string& directory, int* widthOut, int* heightOut);
 
     Collision rayCast(
         const Ray& ray,

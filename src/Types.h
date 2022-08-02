@@ -5,7 +5,7 @@
 #include <gtc/quaternion.hpp>
 #include <gtx/quaternion.hpp>
 
-#include "Core/Rendering/Resource.h"
+#include "Core/Resource.h"
 #include "Core/Rendering/SimpleTexture.h"
 
 struct Level
@@ -287,6 +287,6 @@ public:
     {
         const std::hash<std::string> strhash;
 
-        return strhash(r.fullPath);
+        return strhash(r.getPath());
     }
 };

@@ -105,17 +105,21 @@ if(EMSCRIPTEN)
     endif()
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in "${EMSCRIPTEN_SHELL_HTML}")
 
+    add_executable(Outrospection ${DIR_SRC})
+
     set_target_properties(Outrospection PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res --shell-file ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in")
 
-    add_executable(Outrospection ${DIR_SRC})
 elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
-    message("Matched Android system name! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     add_library(Outrospection SHARED ${DIR_SRC})
 endif() # TODO iOS
 
 if(GLFM)
     set(PLATFORM_DEPS "glfm")
-    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "")
+
+    if(CMAKE_SYSTEM_NAME MATCHES "Android")
+        set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "GLESv3 log")
+    endif()
+
 else()
     set(CMAKE_EXE_LINKER_FLAGS) # -static
     add_executable(Outrospection ${DIR_SRC})
@@ -142,7 +146,6 @@ target_link_libraries(Outrospection
     PUBLIC
     ${PLATFORM_DEPS}
     ${PLATFORM_DEPS_2_ELECTRIC_BOOGALOO}
-    GLESv3
     
     PRIVATE
     ${CMAKE_DL_LIBS}

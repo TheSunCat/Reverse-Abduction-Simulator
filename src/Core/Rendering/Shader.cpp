@@ -6,6 +6,7 @@
 #include <ext/matrix_clip_space.hpp>
 
 #include "Util.h"
+#include "Core/File.h"
 
 Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
 {
@@ -15,21 +16,23 @@ Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
     vName = "ES_" + vName;
 #endif
 
-    std::string vertexPath("ShaderData/" + vName + ".vert");
-
     std::string fName(fragmentName);
 #ifdef USE_GLFM
     fName = "ES_" + fName;
 #endif
 
-    std::string fragmentPath("ShaderData/" + fName + ".frag");
-
     // read shader code from file
-    std::string vertexCode = Util::readAllBytes(vertexPath);
-    std::string fragmentCode = Util::readAllBytes(fragmentPath);
+    File vertexFile = File({"ShaderData/", vName, "vert"});
+    File fragmentFile = File({"ShaderData/", fName, "frag"});
 
-    const char* vCode = vertexCode.c_str();
-    const char* fCode = fragmentCode.c_str();
+    const std::vector<unsigned char> vCodeVector = vertexFile.readAllBytes();
+    const std::vector<unsigned char> fCodeVector = fragmentFile.readAllBytes();
+
+    std::string vCodeStr = std::string(vCodeVector.begin(), vCodeVector.end());
+    std::string fCodeStr = std::string(fCodeVector.begin(), fCodeVector.end());
+
+    const char* vCode = vCodeStr.c_str();
+    const char* fCode = fCodeStr.c_str();
 
     // vertex shader
     GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -43,7 +46,8 @@ Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
     if (!success)
     {
         glGetShaderInfoLog(vertex, 512, nullptr, errorLog);
-        LOG_ERROR("Vertex shader %s failed to compile, error log:\n%s", vertexPath, errorLog);
+        LOG_ERROR("Vertex shader %s failed to compile, error log:\n%s", vertexFile.path(), errorLog);
+        LOG("Vertex shader code: \n\n%s\n\n", std::string(vCode));
     }
 
     // fragment shader
@@ -55,7 +59,8 @@ Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
     if (!success)
     {
         glGetShaderInfoLog(fragment, 512, nullptr, errorLog);
-        LOG_ERROR("Fragment shader %s failed to compile, error log:\n%s", fragmentPath, errorLog);
+        LOG_ERROR("Fragment shader %s failed to compile, error log:\n%s", fragmentFile.path(), errorLog);
+        LOG("Fragment shader code: \n\n%s\n\n", std::string(fCode));
     }
 
     // shader program
@@ -69,7 +74,7 @@ Shader::Shader(const GLchar* vertexName, const GLchar* fragmentName)
     if (!success)
     {
         glGetProgramInfoLog(ID, 512, nullptr, errorLog);
-        LOG_ERROR("Failed to link shader programs %s and %s, error log:\n%s", vertexPath, fragmentPath, errorLog);
+        LOG_ERROR("Failed to link shader programs %s and %s, error log:\n%s", vertexFile.path(), fragmentFile.path(), errorLog);
     }
 
     // delete the shaders as they're linked into our program now and no longer necessary

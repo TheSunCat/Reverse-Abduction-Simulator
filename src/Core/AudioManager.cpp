@@ -1,6 +1,7 @@
 #include "AudioManager.h"
 
 #include "Util.h"
+#include "Core/File.h"
 
 void AudioManager::loadSound(const std::string& soundName)
 {
@@ -8,9 +9,10 @@ void AudioManager::loadSound(const std::string& soundName)
     if (!wave) {
         wave = std::make_unique<SoLoud::Wav>();
 
-        std::string file = Util::path("SoundData/" + soundName + ".ogg");
+        File file = File({"SoundData/", soundName, "ogg"});
+        std::vector<unsigned char> data = file.readAllBytes();
 
-        wave->load(file.c_str()); // load the file
+        wave->loadMem(data.data(), data.size(), true, true); // load the file
     }
 }
 
@@ -39,15 +41,20 @@ float filter_param2[6] = { 2, 3,  0, 0, 0, 0 };
 
 void AudioManager::play(const std::string& soundName, float vol, bool loop)
 {
-    auto& [key, wave] = *waves.try_emplace(soundName).first;
-    if (!wave) {
+    SoLoud::Wav* wave = nullptr;
+
+    auto& [key, wavePtr] = *waves.try_emplace(soundName).first;
+    if (wavePtr)
+    {
+        wave = &*wavePtr;
+    }
+    else
+    {
         LOG_ERROR("Sound \"%s\" was played without being pre-loaded! Please add its name to the init call.", soundName);
 
-        wave = std::make_unique<SoLoud::Wav>();
+        loadSound(soundName);
 
-        std::string file = Util::path("SoundData/" + soundName + ".ogg");
-
-        wave->load(file.c_str()); // load the file
+        wave = &*waves[soundName]; // TODO this looks cursed
     }
     
     wave->setLooping(loop);

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <ft2build.h>
+#include <Core/File.h>
 
 #include FT_FREETYPE_H
 
@@ -8,6 +9,8 @@
 
 class FreeType
 {
+    std::vector<unsigned char> fontData;
+
 public:
     void loadChar(FT_Face face, char c)
     {
@@ -56,17 +59,23 @@ public:
 
     FreeType()
     {
+        LOG("Initializing FreeType...");
+
         FT_Library ft;
         if (FT_Init_FreeType(&ft))
         {
-            std::cout << "Failed to initialize FreeType!";
+            LOG_ERROR("Failed to initialize FreeType!");
             return;
         }
 
+        File fontFile = File(Resource("ObjectData/UI/", "octopuzzlerType.otf"));
+
+        fontData = fontFile.readAllBytes();
+
         FT_Face face;
-        if (FT_New_Face(ft, Util::path("ObjectData/UI/octopuzzlerType.otf").c_str(), 0, &face))
+        if (FT_New_Memory_Face(ft, fontData.data(), fontData.size(), 0, &face))
         {
-            std::cout << "Failed to load res/ObjectData/UI/octopuzzlerType.otf!";
+            LOG("Failed to load ObjectData/UI/octopuzzlerType.otf!");
             return;
         }
 

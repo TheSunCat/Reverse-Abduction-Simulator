@@ -9,7 +9,7 @@
 #include <glad/glad.h>
 #endif
 
-#include "Resource.h"
+#include "Core/Resource.h"
 #include "Types.h"
 
 #include "SimpleTexture.h"
@@ -35,12 +35,12 @@ public:
     static SimpleTexture MissingTexture;
     static SimpleTexture None;
 
-    static unsigned char* readImageBytes(const std::string& path, int& width, int& height);
+    static unsigned char* readImageBytes(const Resource& res, int& width, int& height, int& nrComponents);
     static void free(unsigned char* data);
 
     DISALLOW_COPY_AND_ASSIGN(TextureManager);
 private:
-    static GLuint textureFromFile(const std::string& filename, const GLint& filter);
-    static void createTexture(const GLuint& texId, const unsigned char* data, const GLenum& format,
-                              const unsigned int& width, const unsigned int& height, const GLint& filter);
+    static GLuint textureFromFile(const Resource& res, const GLint& filter);
+    static void createTexture(const GLuint& texId, const unsigned char* data, const GLint& format,
+                              const GLsizei& width, const GLsizei& height, const GLint& filter);
 };

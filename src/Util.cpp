@@ -132,114 +132,14 @@ void Util::doLater(std::function<void()> func, time_t waitTime)
 std::string Util::path(const std::string& relPath)
 {
 #ifdef PLATFORM_ANDROID
-    return "assets/" + relPath;
+    char fullPath[PATH_MAX];
+    fc_resdir(fullPath, sizeof(fullPath));
+    strncat(fullPath, relPath.c_str(), sizeof(fullPath) - strlen(fullPath) - 1);
+
+    return std::string(fullPath);
 #else
     return "res/" + relPath;
 #endif
-}
-
-bool Util::fileExists(const std::string& file)
-{
-    std::string fullPath = Util::path(file);
-
-    std::cout << "Checking file " << fullPath << std::endl;
-
-#ifndef PLATFORM_ANDROID
-    return std::filesystem::exists(fullPath);
-#else
-    // TODO bad code but I want Android building ok
-
-    std::ifstream iFile;
-    iFile.open(fullPath);
-
-    if(iFile)
-        return true;
-    else
-        return false;
-#endif
-}
-
-std::vector<std::string> Util::listFiles(const std::string& dir)
-{
-    std::string fullDir = Util::path(dir);
-
-    std::vector<std::string> ret;
-
-    // TODO Android doesn't support std::filesystem::directory_iterator
-    //assert(false);
-    ret.push_back(dir);
-    return ret;
-
-#ifndef PLATFORM_XP
-    for (const auto& entry : std::filesystem::directory_iterator(fullDir)) {
-        auto str = entry.path().string();
-        std::replace(str.begin(), str.end(), '\\', '/');
-
-        ret.emplace_back(str);
-    }
-#else
-
-    WIN32_FIND_DATA ffd;
-    LARGE_INTEGER filesize;
-    TCHAR szDir[MAX_PATH];
-    HANDLE hFind = INVALID_HANDLE_VALUE;
-    DWORD dwError = 0;
-
-    // Prepare string for use with FindFile functions.  First, copy the
-    // string to a buffer, then append '\*' to the directory name.
-    StringCchCopy(szDir, MAX_PATH, fullDir.c_str());
-    StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
-
-    // Find the first file in the directory.
-    hFind = FindFirstFile(szDir, &ffd);
-
-    if (INVALID_HANDLE_VALUE == hFind)
-    {
-        LOG_ERROR("FindFirstFile");
-        return ret;
-    }
-
-    do
-    {
-        if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        {
-            ret.emplace_back(ffd.cFileName);
-        }
-    } while (FindNextFile(hFind, &ffd) != 0);
-#endif
-
-    return ret;
-}
-
-std::string Util::readAllBytes(const std::string& file)
-{
-    std::string fullPath = Util::path(file);
-    
-    std::ifstream fileStream;
-
-    // ensure ifstream objects can throw exceptions
-    fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-    try
-    {
-        // open file
-        fileStream.open(fullPath);
-        std::stringstream fileString;
-
-        // read file's buffer contents into streams
-        fileString << fileStream.rdbuf();
-
-        // close file handlers
-        fileStream.close();
-
-        // convert stream into string
-        return fileString.str();
-    }
-    catch (std::ifstream::failure& e)
-    {
-        LOG_ERROR("Failed to read file \"%s\"! errno %s", fullPath, e.what());
-        return "ERROR: NO FILE";
-    }
 }
 
 glm::vec3 Util::rotToVec3(const float yaw, const float pitch)
@@ -259,26 +159,6 @@ std::string Util::vecToStr(const glm::vec3& vec)
 std::string Util::vecToStr(const glm::vec2& vec)
 {
     return std::to_string(vec.x) + ", " + std::to_string(vec.y);
-}
-
-unsigned char* Util::imageDataFromFile(const char* path, const std::string& directory, int* widthOut, int* heightOut)
-{
-    std::string filename = std::string(path);
-    filename = Util::path(directory + '/' + filename);
-
-    int nrComponents = 0;
-    unsigned char* data = stbi_load(filename.c_str(), widthOut, heightOut, &nrComponents, 0);
-    if (data)
-    {
-        stbi_image_free(data);
-    }
-    else
-    {
-        LOG_ERROR("Texture data failed to load at path: %s", filename);
-        stbi_image_free(data);
-    }
-
-    return data;
 }
 
 // partly based on https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Util.h"
+#include "Core/File.h"
 #include "Core/Rendering/TickableTexture.h"
 
 SimpleTexture TextureManager::MissingTexture(-1);
@@ -39,11 +40,12 @@ TextureManager::TextureManager()
     None.texId = texId;
 }
 
-SimpleTexture& TextureManager::loadTexture(const Resource& r, const GLint& filter)
+SimpleTexture& TextureManager::loadTexture(const Resource& res, const GLint& filter)
 {
-    const std::string path = r.getResourcePath() + ".png";
+    Resource r = res;
+    r.setExtension("png");
 
-    const GLuint texId = textureFromFile(path, filter);
+    const GLuint texId = textureFromFile(r, filter);
 
     if (texId != INT_MAX)
     {
@@ -55,22 +57,25 @@ SimpleTexture& TextureManager::loadTexture(const Resource& r, const GLint& filte
     }
     else
     {
-        LOG_ERROR("Failed to generate texture ID for %s", path);
+        LOG_ERROR("Failed to generate texture ID for %s", r.getPath());
 
         return MissingTexture;
     }
 }
 
-SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& r, unsigned int textureTickLength,
+SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& res, unsigned int textureTickLength,
                                                    const unsigned int textureFrameCount, const GLint& filter, bool loop)
 {
-    std::string path = r.getResourcePath();
+    Resource r = res;
+    r.setExtension("png");
 
     std::vector<GLuint> textureIds;
 
     for (unsigned int i = 0; i < textureFrameCount; i++)
     {
-        GLuint currentTextureId = textureFromFile(path + std::to_string(i) + ".png", filter);
+        Resource curRes = r.getNth(i);
+
+        GLuint currentTextureId = textureFromFile(curRes, filter);
 
         if (currentTextureId != INT_MAX)
         {
@@ -79,14 +84,14 @@ SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& r, unsigned i
         else
         {
             LOG_ERROR("Failed to generate texture ID for animated texture frame %i at %s", textureFrameCount,
-                      path + std::to_string(i) + ".png");
+                      curRes.getPath());
 
             textureIds.push_back(MissingTexture.texId);
         }
     }
 
     auto [it, success] = textures.insert(
-        std::pair(r, std::make_unique<TickableTexture>(textureIds, path, textureTickLength, loop)));
+        std::pair(r, std::make_unique<TickableTexture>(textureIds, r.getPath(), textureTickLength, loop)));
 
     return *(it->second);
 }
@@ -105,7 +110,7 @@ SimpleTexture& TextureManager::get(const Resource& r)
     if (f == textures.end())
     {
         // resource not found in already existing storage, needs to be loaded
-        LOG_ERROR("Texture %s was not loaded before fetching! Loading now as fallback...", r.getResourcePath());
+        LOG_ERROR("Texture %s was not loaded before fetching! Loading now as fallback...", r.getPath());
         return loadTexture(r, GL_LINEAR);
     }
     else
@@ -123,10 +128,12 @@ void TextureManager::tickAllTextures()
     }
 }
 
-unsigned char* TextureManager::readImageBytes(const std::string& path, int& width, int& height)
+unsigned char* TextureManager::readImageBytes(const Resource& res, int& width, int& height, int& nrComponents)
 {
-    int nrComponents = 0;
-    return stbi_load(Util::path(path).c_str(), &width, &height, &nrComponents, 0);
+    File file = File(res);
+    const std::vector<unsigned char> data = file.readAllBytes();
+
+    return stbi_load_from_memory(data.data(), int(data.size()), &width, &height, &nrComponents, 0);
 }
 
 void TextureManager::free(unsigned char* data)
@@ -134,8 +141,8 @@ void TextureManager::free(unsigned char* data)
     stbi_image_free(data);
 }
 
-void TextureManager::createTexture(const GLuint& texId, const unsigned char* data, const GLenum& format,
-                                   const unsigned int& width, const unsigned int& height, const GLint& filter)
+void TextureManager::createTexture(const GLuint& texId, const unsigned char* data, const GLint& format,
+                                   const GLsizei& width, const GLsizei& height, const GLint& filter)
 {
     glBindTexture(GL_TEXTURE_2D, texId);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -149,18 +156,18 @@ void TextureManager::createTexture(const GLuint& texId, const unsigned char* dat
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }
 
-GLuint TextureManager::textureFromFile(const std::string& filename, const GLint& filter)
+GLuint TextureManager::textureFromFile(const Resource& res, const GLint& filter)
 {
     GLuint tex;
     int width, height;
     glGenTextures(1, &tex);
 
     int nrComponents = 0;
-    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data = readImageBytes(res, width, height, nrComponents);
 
     if (data)
     {
-        GLenum format;
+        GLint format;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
@@ -176,7 +183,7 @@ GLuint TextureManager::textureFromFile(const std::string& filename, const GLint&
     }
     else
     {
-        LOG_ERROR("Texture failed to load at path: %s", filename);
+        LOG_ERROR("Texture failed to load at path: %s", res.getPath());
         LOG_ERROR("stbi_failure_reason: %s", stbi_failure_reason());
         stbi_image_free(data);
 
