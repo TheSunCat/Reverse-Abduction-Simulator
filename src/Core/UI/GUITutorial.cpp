@@ -5,7 +5,7 @@
 
 GUITutorial::GUITutorial() : GUILayer("Tutorial", false), m_tutorial("Tutorial", simpleTexture({"ObjectData/UI/", "tutorial"}, GL_LINEAR), UITransform(0, 0, 1920, 1080))
 {
-    buttons.push_back(new UIButton("close", simpleTexture({"ObjectData/UI/", "closeButton"}, GL_LINEAR), UITransform(1820, 20, 80, 80), Bounds(), [] (UIButton&, int) {
+    buttons.push_back(new UIButton("close", simpleTexture({"ObjectData/UI/", "closeButton"}, GL_LINEAR), UITransform(1820, 20, 80, 80), Bounds(UITransform(1820, 20, 150), BoundsShape::Circle), [] (UIButton&, int) {
         auto& o = Outrospection::get();
         o.popOverlay(o.layerPtrs["tutorial"]);
 
@@ -14,7 +14,7 @@ GUITutorial::GUITutorial() : GUILayer("Tutorial", false), m_tutorial("Tutorial",
         o.pushOverlay(o.layerPtrs["characterMaker"]);
         o.pushOverlay(o.layerPtrs["stats"]);
 
-        ((GUIStats*)o.layerPtrs["stats"])->setTimer(/* TODO 150 */900);
+        ((GUIStats*)o.layerPtrs["stats"])->setTimer(150900);
     }));
 }
 

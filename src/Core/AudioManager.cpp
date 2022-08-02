@@ -12,7 +12,7 @@ void AudioManager::loadSound(const std::string& soundName)
         File file = File({"SoundData/", soundName, "ogg"});
         std::vector<unsigned char> data = file.readAllBytes();
 
-        wave->loadMem(data.data(), data.size(), true, true); // load the file
+        wave->loadMem(data.data(), data.size(), false, false); // load the file
     }
 }
 

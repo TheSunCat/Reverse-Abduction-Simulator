@@ -1,22 +1,21 @@
 #include "File.h"
 
 #include "Util.h"
-#include "Platform.h"
 
 #include <fstream>
+#include <utility>
 
 #ifdef PLATFORM_ANDROID
 AAssetManager* File::assetManager = nullptr;
 #endif
 
-File::File(Resource res) : resource(res)
+File::File(Resource res) : resource(std::move(res))
 {
 #ifdef PLATFORM_ANDROID
     if(!assetManager) {
         // get the asset manager for the first time
 
         ANativeActivity *activity = glfmAndroidGetActivity();
-        AAsset *asset = nullptr;
         if (activity) {
             assetManager = activity->assetManager;
         }
@@ -35,15 +34,8 @@ bool File::exists()
 #ifndef PLATFORM_ANDROID
     return std::filesystem::exists(fullPath);
 #else
-    // TODO bad code but I want Android building ok
-
-
-    auto* iFile = fopen(fullPath.c_str(), "r");
-
-    if(iFile)
-        return true;
-    else
-        return false;
+    AAsset* asset = AAssetManager_open(assetManager, fullPath.c_str(), AASSET_MODE_UNKNOWN);
+    return asset != nullptr;
 #endif
 }
 
@@ -65,7 +57,7 @@ std::vector<unsigned char> File::readAllBytes()
 #ifdef PLATFORM_ANDROID
     assert(assetManager != nullptr);
 
-    asset = AAssetManager_open(assetManager, fullPath.c_str(), AASSET_MODE_UNKNOWN);
+    AAsset* asset = AAssetManager_open(assetManager, fullPath.c_str(), AASSET_MODE_UNKNOWN);
 
     if (asset) {
         length = AAsset_getLength(asset);
@@ -74,7 +66,7 @@ std::vector<unsigned char> File::readAllBytes()
         AAsset_read(asset, ret.data(), length);
         return ret;
     } else {
-        LOG_ERROR("Failed to read file \"%s\"! errno %s", fullPath, e.what());
+        LOG_ERROR("Failed to read file \"%s\"!", fullPath);
 
         length = 0;
         return ret;

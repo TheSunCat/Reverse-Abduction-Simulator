@@ -1,5 +1,11 @@
 #pragma once
 
+#include "Platform.h"
+
+#ifdef PLATFORM_ANDROID
+#include <android/asset_manager.h>
+#endif
+
 #include "Resource.h"
 #include "Core.h"
 

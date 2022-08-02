@@ -117,7 +117,8 @@ if(GLFM)
     set(PLATFORM_DEPS "glfm")
 
     if(CMAKE_SYSTEM_NAME MATCHES "Android")
-        set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "GLESv3 log")
+        set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "GLESv3")
+        set(PLATFORM_DEPS_3_ELECTRIC_BOOGALOO "log")
     endif()
 
 else()
@@ -146,6 +147,7 @@ target_link_libraries(Outrospection
     PUBLIC
     ${PLATFORM_DEPS}
     ${PLATFORM_DEPS_2_ELECTRIC_BOOGALOO}
+    ${PLATFORM_DEPS_3_ELECTRIC_BOOGALOO}
     
     PRIVATE
     ${CMAKE_DL_LIBS}

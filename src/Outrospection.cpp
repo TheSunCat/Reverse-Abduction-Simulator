@@ -388,6 +388,10 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
     {
         MouseButtonReleasedEvent event(0);
         Outrospection::get().onEvent(event);
+
+        // move the "mouse" out of the way so buttons unhover
+        MouseMovedEvent event2(-9999, -9999);
+        Outrospection::get().onEvent(event2);
         return true;
     }
     }

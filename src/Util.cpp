@@ -132,11 +132,12 @@ void Util::doLater(std::function<void()> func, time_t waitTime)
 std::string Util::path(const std::string& relPath)
 {
 #ifdef PLATFORM_ANDROID
-    char fullPath[PATH_MAX];
-    fc_resdir(fullPath, sizeof(fullPath));
-    strncat(fullPath, relPath.c_str(), sizeof(fullPath) - strlen(fullPath) - 1);
+    //char fullPath[PATH_MAX];
+    //fc_resdir(fullPath, sizeof(fullPath));
+    //strncat(fullPath, relPath.c_str(), sizeof(fullPath) - strlen(fullPath) - 1);
 
-    return std::string(fullPath);
+    //return std::string(fullPath);
+    return relPath;
 #else
     return "res/" + relPath;
 #endif

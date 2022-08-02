@@ -51,7 +51,7 @@ bool GUILayer::onKeyReleased(KeyReleasedEvent& event)
 
 bool GUILayer::onMousePressed(MouseButtonPressedEvent& event)
 {
-    for (auto& button : buttons)
+    for (UIButton* button : buttons)
     {
         if (button->hovered && button->onClick)
         {
@@ -74,5 +74,10 @@ bool GUILayer::onMouseReleased(MouseButtonReleasedEvent& event)
 
 bool GUILayer::onMouseMoved(MouseMovedEvent& event)
 {
+    for (UIButton* button : buttons)
+    {
+        button->tick();
+    }
+
     return false;
 }
