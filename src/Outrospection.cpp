@@ -378,6 +378,7 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
 
     switch (phase)
     {
+    case GLFMTouchPhaseMoved:
     case GLFMTouchPhaseHover:
     {
         return false;

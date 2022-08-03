@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.18)
 
+set(CMAKE_CXX_FLAGS_DEBUG  "-g")
+
 if(EMSCRIPTEN OR CMAKE_SYSTEM_NAME MATCHES "Android")
     set(GLFM "1")
     message("Setting GLFM to true...")
 endif()
 
 message(CMAKE_SYSTEM_NAME="${CMAKE_SYSTEM_NAME}")
-set(CMAKE_VERBOSE_MAKEFILE on)
+#set(CMAKE_VERBOSE_MAKEFILE on)
 
 # add vcpkg
 include(FetchContent)
