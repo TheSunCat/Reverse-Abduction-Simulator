@@ -5,6 +5,7 @@
 
 static void loadSound(SoLoud::Wav* wave, const std::string& soundName)
 {
+    LOG("Loading sound %s...", soundName);
     File file = File({"SoundData/", soundName, "ogg"});
     std::vector<unsigned char> data = file.readAllBytes();
 
@@ -13,6 +14,8 @@ static void loadSound(SoLoud::Wav* wave, const std::string& soundName)
 
 void AudioManager::init(const std::vector<std::string>& sounds)
 {
+    LOG("Initializing SoLoud...");
+
     engine.init(0U, // aFlags
                 0U, // aBackend
                 0U, // aSampleRate
@@ -21,6 +24,7 @@ void AudioManager::init(const std::vector<std::string>& sounds)
 
     engine.setGlobalVolume(0.5);
 
+    LOG("Asychronously preloading sounds...");
     // load the unordered_map with the keys, then load asynchronously
     for(const std::string& sound : sounds) {
         auto [it, success] = waves.try_emplace(sound);
@@ -28,9 +32,15 @@ void AudioManager::init(const std::vector<std::string>& sounds)
         if(!it->second) {
             it->second = std::make_unique<SoLoud::Wav>();
 
+#ifdef PLATFORM_EMSCRIPTEN
+            loadSound(it->second.get(), sound); // Emscripten does not support std::async
+#else
             m_futureWaves.push_back(std::async(std::launch::async, loadSound, it->second.get(), sound));
+#endif
         }
     }
+
+    LOG("Successfully initialized SoLoud!");
 }
 
 AudioManager::~AudioManager()
