@@ -8,18 +8,17 @@
 class TickableTexture : public SimpleTexture
 {
 public:
-    TickableTexture(const std::vector< GLuint >& texIds, const std::string& _texPath, const unsigned int _frameLength, bool _shouldRestart);
+    TickableTexture() = default;
+    TickableTexture(const std::vector<GLuint>& texIds, const unsigned int _frameLength, bool _shouldRestart);
 
     void tick() override;
-
     void tick(unsigned int& stepCount);
-
     void nextFrame();
 
     void reset() override;
 private:
-    const std::vector<GLuint> textures;
-    const unsigned int frameLength;
+    std::vector<GLuint> textures;
+    unsigned int frameLength = 5;
 
     unsigned int frameTally = 0;
     GLuint curFrame = 0;

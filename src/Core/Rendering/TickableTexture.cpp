@@ -1,6 +1,6 @@
 #include "TickableTexture.h"
 
-TickableTexture::TickableTexture(const std::vector<GLuint>& texIds, const std::string& _texPath,
+TickableTexture::TickableTexture(const std::vector<GLuint>& texIds,
                                  const unsigned int _frameLength, bool _shouldRestart)
     : SimpleTexture(texIds.at(0)), textures(texIds), frameLength(_frameLength)
 {

@@ -53,7 +53,6 @@ std::vector<unsigned char> File::readAllBytes()
     unsigned int length = 0;
     std::vector<unsigned char> ret;
 
-    LOG("readAllBytes(%s)", fullPath);
 #ifdef PLATFORM_ANDROID
     assert(assetManager != nullptr);
 
@@ -63,7 +62,11 @@ std::vector<unsigned char> File::readAllBytes()
         length = AAsset_getLength(asset);
         ret.resize(length);
 
+        LOG_DEBUG("Reading %i-long file %s...", length, fullPath);
+
         AAsset_read(asset, ret.data(), length);
+
+        AAsset_close(asset);
         return ret;
     } else {
         LOG_ERROR("Failed to read file \"%s\"!", fullPath);
@@ -87,11 +90,11 @@ std::vector<unsigned char> File::readAllBytes()
         length = fileStream.tellg();
         ret.resize(length);
 
+        LOG_DEBUG("Reading %i-long file %s...", length, fullPath);
+
         // go back to the beginning to read
         fileStream.seekg(0, std::ios::beg);
         fileStream.read((char*) ret.data(), length);
-
-        LOG("Read %i-long file %s", length, fullPath);
 
         fileStream.close();
 
@@ -121,8 +124,10 @@ std::vector<std::string> File::listFiles()
 
     const char* curDir;
     while((curDir = AAssetDir_getNextFileName(dir)) != nullptr) {
-        ret.push_back(curDir);
+        ret.emplace_back(curDir);
     }
+
+    AAssetDir_close(dir);
 #else
     for (const auto& entry : std::filesystem::directory_iterator(fullDir)) {
         auto str = entry.path().string();

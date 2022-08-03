@@ -10,7 +10,7 @@ public:
     void setExtension(const std::string& extension);
     std::string getPath() const;
 
-    Resource getNth(unsigned int i);
+    Resource getNth(unsigned int i) const;
 
     bool isDir = false;
 

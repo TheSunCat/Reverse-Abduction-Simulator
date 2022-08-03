@@ -27,7 +27,7 @@ bool Resource::operator==(const Resource& r) const
     return (m_fullPath == r.m_fullPath);
 }
 
-Resource Resource::getNth(unsigned int i)
+Resource Resource::getNth(unsigned int i) const
 {
     return Resource(m_fullPath, std::to_string(i), m_extension);
 }

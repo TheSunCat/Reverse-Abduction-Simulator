@@ -91,7 +91,7 @@ SimpleTexture& TextureManager::loadAnimatedTexture(const Resource& res, unsigned
     }
 
     auto [it, success] = textures.insert(
-        std::pair(r, std::make_unique<TickableTexture>(textureIds, r.getPath(), textureTickLength, loop)));
+        std::pair(r, std::make_unique<TickableTexture>(textureIds, textureTickLength, loop)));
 
     return *(it->second);
 }
