@@ -212,15 +212,19 @@ GLuint TextureManager::textureFromFile(const Resource& res, const GLint& filter)
 
 void TextureManager::requestTexture(const WantedTexture& tex)
 {
+#ifdef PLATFORM_EMSCRIPTEN
+    wantedTextures.push_back([tex] {
+#else
     wantedTextures.emplace_back(std::async(std::launch::async, [tex] {
+#endif
         WantedTexture ret = tex;
 
         ret.data = new Image[ret.frameCount];
 
         // TODO async this, too
-        for(int i = 0; i < ret.frameCount; i++) {
+        for (int i = 0; i < ret.frameCount; i++) {
             Resource curRes;
-            if(ret.frameCount == 1)
+            if (ret.frameCount == 1)
                 curRes = ret.resource;
             else
                 curRes = ret.resource.getNth(i);
@@ -229,15 +233,24 @@ void TextureManager::requestTexture(const WantedTexture& tex)
         }
 
         return ret;
+#ifdef PLATFORM_EMSCRIPTEN
+    }());
+#else
     }));
+#endif
 }
 
 void TextureManager::loadWantedTextures()
 {
+#ifdef PLATFORM_EMSCRIPTEN
+    for(auto& wantedTex : wantedTextures)
+    {
+#else
     for(auto& wantedTexFuture : wantedTextures)
     {
         //wantedTexFuture.wait();
         const WantedTexture& wantedTex = wantedTexFuture.get();
+#endif
 
         std::vector<GLuint> texIDs;
 

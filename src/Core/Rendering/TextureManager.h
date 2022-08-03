@@ -72,5 +72,9 @@ private:
     static void createTexture(const GLuint& texId, const unsigned char* data, const GLint& format,
                               const GLsizei& width, const GLsizei& height, const GLint& filter);
 
+#ifdef PLATFORM_EMSCRIPTEN
+    std::vector<WantedTexture> wantedTextures;
+#else
     std::vector<std::future<WantedTexture>> wantedTextures;
+#endif
 };
