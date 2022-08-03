@@ -19,8 +19,8 @@ std::string operator+(const std::string& str, int i);
 std::string operator+(int i, const std::string& str);
 
 // proxy functions that are shorter than the usual huge call
-SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop = true);
-SimpleTexture& simpleTexture(const Resource& resource, const GLint& filter);
+Resource animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop = true);
+Resource simpleTexture(const Resource& resource, const GLint& filter);
 
 namespace Util
 {

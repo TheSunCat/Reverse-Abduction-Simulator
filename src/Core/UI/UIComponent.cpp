@@ -75,10 +75,10 @@ UIComponent::UIComponent(const std::string& _texName, const GLint& texFilter, co
 {
 }
 
-UIComponent::UIComponent(std::string _name, SimpleTexture& _tex, const UITransform& _transform)
+UIComponent::UIComponent(std::string _name, const Resource& _res, const UITransform& _transform)
     : text(std::move(_name)), textColor(0.0f), transform(_transform)
 {
-    animations.insert(std::make_pair("default", &_tex));
+    animations.insert(std::make_pair("default", _res));
 
     // we need to create our quad the first time!
     if (quadVAO == 0)
@@ -122,15 +122,15 @@ void UIComponent::tick()
     opacity = Util::lerp(opacity, opacityGoal, animationSpeed);
 }
 
-void UIComponent::addAnimation(const std::string& anim, SimpleTexture& _tex)
+void UIComponent::addAnimation(const std::string& anim, const Resource& _res)
 {
-    animations.insert(std::make_pair(anim, &_tex));
+    animations.insert(std::make_pair(anim, _res));
 }
 
 void UIComponent::setAnimation(const std::string& anim)
 {
-    animations.at(curAnimation)->shouldTick = false;
-    animations.at(curAnimation)->reset();
+    Outrospection::get().textureManager.get(animations.at(curAnimation)).shouldTick = false;
+    Outrospection::get().textureManager.get(animations.at(curAnimation)).reset();
 
     if(animations.find(anim) == animations.end())
     {
@@ -140,8 +140,8 @@ void UIComponent::setAnimation(const std::string& anim)
         curAnimation = anim;
     }
 
-    animations.at(curAnimation)->reset();
-    animations.at(curAnimation)->shouldTick = true;
+    Outrospection::get().textureManager.get(animations.at(curAnimation)).reset();
+    Outrospection::get().textureManager.get(animations.at(curAnimation)).shouldTick = true;
 }
 
 void UIComponent::setPosition(int x, int y)
@@ -186,7 +186,7 @@ void UIComponent::draw(Shader& shader, const Shader& glyphShader) const
     shader.setBool("flip", flip);
 
     glActiveTexture(GL_TEXTURE0);
-    animations.at(curAnimation)->bind();
+    Outrospection::get().textureManager.get(animations.at(curAnimation)).bind();
 
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

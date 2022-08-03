@@ -2,6 +2,7 @@
 #include "Core.h"
 
 #include <unordered_map>
+#include <future>
 
 #ifdef USE_GLFM
 #include "glfm.h"
@@ -18,8 +19,32 @@ class TextureManager
 {
 private:
     std::unordered_map<Resource, std::unique_ptr<SimpleTexture>, Hashes> textures;
+
 public:
+
+    struct Image
+    {
+        Resource res{};
+
+        unsigned char* bytes = nullptr;
+        int width = 10, height = 10;
+        int nrComponents = 4;
+    };
+    struct WantedTexture
+    {
+        Resource resource;
+        GLint filter = GL_LINEAR;
+
+        int tickLength = 1;
+        int frameCount = 1;
+        bool loop = true;
+
+        Image* data = nullptr;
+    };
+
     TextureManager();
+
+    void requestTexture(const WantedTexture& tex);
 
     SimpleTexture& loadTexture(const Resource& r, const GLint& filter = GL_LINEAR);
 
@@ -35,12 +60,17 @@ public:
     static SimpleTexture MissingTexture;
     static SimpleTexture None;
 
-    static unsigned char* readImageBytes(const Resource& res, int& width, int& height, int& nrComponents);
+    static Image readImageBytes(const Resource& res);
     static void free(unsigned char* data);
+
+    void loadWantedTextures();
 
     DISALLOW_COPY_AND_ASSIGN(TextureManager);
 private:
     static GLuint textureFromFile(const Resource& res, const GLint& filter);
+
     static void createTexture(const GLuint& texId, const unsigned char* data, const GLint& format,
                               const GLsizei& width, const GLsizei& height, const GLint& filter);
+
+    std::vector<std::future<WantedTexture>> wantedTextures;
 };

@@ -29,5 +29,10 @@ bool Resource::operator==(const Resource& r) const
 
 Resource Resource::getNth(unsigned int i) const
 {
-    return Resource(m_fullPath, std::to_string(i), m_extension);
+    return {m_fullPath, std::to_string(i), m_extension};
+}
+
+bool Resource::empty() const
+{
+    return getPath().empty();
 }

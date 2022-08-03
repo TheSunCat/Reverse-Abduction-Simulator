@@ -105,6 +105,9 @@ void TextureManager::bindTexture(Resource& r)
 
 SimpleTexture& TextureManager::get(const Resource& r)
 {
+    if(r.empty())
+        return TextureManager::None;
+
     const auto f = textures.find(r);
 
     if (f == textures.end())
@@ -122,18 +125,29 @@ SimpleTexture& TextureManager::get(const Resource& r)
 // Called every tick, calls tick on every tickable texture.
 void TextureManager::tickAllTextures()
 {
+    if(!wantedTextures.empty())
+    {
+        // asynchronously load all needed textures
+        loadWantedTextures();
+    }
+
     for (auto& val : textures)
     {
         val.second->tick();
     }
 }
 
-unsigned char* TextureManager::readImageBytes(const Resource& res, int& width, int& height, int& nrComponents)
+TextureManager::Image TextureManager::readImageBytes(const Resource& res)
 {
     File file = File(res);
     const std::vector<unsigned char> data = file.readAllBytes();
 
-    return stbi_load_from_memory(data.data(), int(data.size()), &width, &height, &nrComponents, 0);
+    Image ret = Image{res};
+    ret.bytes = stbi_load_from_memory(data.data(), int(data.size()), &ret.width, &ret.height, &ret.nrComponents, 0);
+
+    assert(ret.bytes);
+
+    return ret;
 }
 
 void TextureManager::free(unsigned char* data)
@@ -159,25 +173,28 @@ void TextureManager::createTexture(const GLuint& texId, const unsigned char* dat
 GLuint TextureManager::textureFromFile(const Resource& res, const GLint& filter)
 {
     GLuint tex;
-    int width, height;
     glGenTextures(1, &tex);
 
-    int nrComponents = 0;
-    unsigned char* data = readImageBytes(res, width, height, nrComponents);
+    Image image = readImageBytes(res);
 
-    if (data)
+    if (image.bytes)
     {
         GLint format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
+        switch(image.nrComponents) {
+            case 1:
+                format = GL_RED;
+                break;
+            case 3:
+                format = GL_RGB;
+                break;
+            case 4:
+                format = GL_RGBA;
+                break;
+        }
 
-        createTexture(tex, data, format, width, height, filter);
+        createTexture(tex, image.bytes, format, image.width, image.height, filter);
 
-        stbi_image_free(data);
+        stbi_image_free(image.bytes);
 
         return tex;
     }
@@ -185,8 +202,84 @@ GLuint TextureManager::textureFromFile(const Resource& res, const GLint& filter)
     {
         LOG_ERROR("Texture failed to load at path: %s", res.getPath());
         LOG_ERROR("stbi_failure_reason: %s", stbi_failure_reason());
-        stbi_image_free(data);
+        stbi_image_free(image.bytes);
 
         return INT_MAX;
     }
+}
+
+#include <future>
+
+void TextureManager::requestTexture(const WantedTexture& tex)
+{
+    wantedTextures.emplace_back(std::async(std::launch::async, [tex] {
+        WantedTexture ret = tex;
+
+        ret.data = new Image[ret.frameCount];
+
+        // TODO async this, too
+        for(int i = 0; i < ret.frameCount; i++) {
+            Resource curRes;
+            if(ret.frameCount == 1)
+                curRes = ret.resource;
+            else
+                curRes = ret.resource.getNth(i);
+
+            ret.data[i] = readImageBytes(curRes);
+        }
+
+        return ret;
+    }));
+}
+
+void TextureManager::loadWantedTextures()
+{
+    for(auto& wantedTexFuture : wantedTextures)
+    {
+        //wantedTexFuture.wait();
+        const WantedTexture& wantedTex = wantedTexFuture.get();
+
+        std::vector<GLuint> texIDs;
+
+        for(int i = 0; i < wantedTex.frameCount; i++) {
+            GLuint texID;
+            glGenTextures(1, &texID);
+
+            if (wantedTex.data[i].bytes) {
+                GLint format;
+                switch (wantedTex.data[i].nrComponents) {
+                    case 1:
+                        format = GL_RED;
+                        break;
+                    case 3:
+                        format = GL_RGB;
+                        break;
+                    case 4:
+                        format = GL_RGBA;
+                        break;
+                }
+
+                // upload to GPU
+                createTexture(texID, wantedTex.data[i].bytes, format, wantedTex.data[i].width, wantedTex.data[i].height, wantedTex.filter);
+
+                texIDs.push_back(texID);
+            } else {
+                LOG_ERROR("Texture failed to load at path: %s", wantedTex.resource.getPath());
+                LOG_ERROR("stbi_failure_reason: %s", stbi_failure_reason());
+
+                texIDs.push_back(TextureManager::MissingTexture.texId);
+            }
+
+            stbi_image_free(wantedTex.data[i].bytes);
+        }
+
+        if(texIDs.size() == 1)
+        {
+            textures.insert(std::make_pair(wantedTex.resource, std::make_unique<SimpleTexture>(texIDs[0])));
+        } else {
+            textures.insert(std::make_pair(wantedTex.resource, std::make_unique<TickableTexture>(texIDs, wantedTex.tickLength, wantedTex.loop)));
+        }
+    }
+
+    wantedTextures.clear();
 }

@@ -22,7 +22,7 @@ bool Bounds::contains(const glm::vec2& point) const
         return (point.x > pos.x && point.x < pos.x + size.x) && (point.y > pos.y && point.y < pos.y + size.y);
     case BoundsShape::Circle:
         return Util::dist2(pos + size.x/2.f, point) < (size.x * size.x);
-    case BoundsShape::None:
+    default:
         LOG_ERROR("Invalid bound shape?");
         return false;
     }

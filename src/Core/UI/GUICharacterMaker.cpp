@@ -12,9 +12,9 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_ufoBeam.warpToGoal();
 
     m_human.addAnimation("exploding", animatedTexture({"ObjectData/", "explosion"}, 2, 8, GL_NEAREST, false));
-    m_human.addAnimation("dead", TextureManager::None);
+    m_human.addAnimation("dead", Resource());
 
-    m_human.addToLayer(HumanLayer::HAT, &TextureManager::None);
+    m_human.addToLayer(HumanLayer::HAT, Resource());
     m_human.addToLayer(HumanLayer::HAT, "hat/0");
     m_human.addToLayer(HumanLayer::HAT, "hat/1");
     m_human.addToLayer(HumanLayer::HAT, "hat/2", true);
@@ -29,7 +29,7 @@ GUICharacterMaker::GUICharacterMaker() : GUILayer("Character maker"), m_human(UI
     m_human.addToLayer(HumanLayer::TORSO, "torso/2", true);
     m_human.addToLayer(HumanLayer::TORSO, "torso/3");
     m_human.addToLayer(HumanLayer::TORSO, "torso/4");
-    m_human.addToLayer(HumanLayer::HANDS, &TextureManager::None);
+    m_human.addToLayer(HumanLayer::HANDS, Resource());
     m_human.addToLayer(HumanLayer::HANDS, "hands/0");
     m_human.addToLayer(HumanLayer::HANDS, "hands/1", true);
     m_human.addToLayer(HumanLayer::HANDS, "hands/2");

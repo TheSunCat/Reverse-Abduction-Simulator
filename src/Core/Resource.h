@@ -5,6 +5,8 @@
 class Resource
 {
 public:
+    Resource() = default;
+
     Resource(const std::string& path, const std::string& fileName = "", const std::string& extension = "");
 
     void setExtension(const std::string& extension);
@@ -13,6 +15,7 @@ public:
     Resource getNth(unsigned int i) const;
 
     bool isDir = false;
+    bool empty() const;
 
     bool operator==(const Resource& r) const;
 

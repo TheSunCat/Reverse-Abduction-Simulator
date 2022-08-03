@@ -12,7 +12,7 @@ public:
     UIButton(const std::string& _texName, const GLint& texFilter, const UITransform& transform,
              Bounds bounds, ButtonCallback clickCallback = nullptr);
 
-    UIButton(const std::string& _name, SimpleTexture& tex, const UITransform& transform,
+    UIButton(const std::string& _name, const Resource& res, const UITransform& transform,
              Bounds bounds, ButtonCallback clickCallback = nullptr);
 
     bool isOnButton(const glm::vec2& point) const;

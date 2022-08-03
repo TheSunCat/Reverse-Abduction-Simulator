@@ -72,14 +72,22 @@ std::string operator+(int i, const std::string& str)
     return std::to_string(i) + str;
 }
 
-SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop)
+Resource animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop)
 {
-    return Outrospection::get().textureManager.loadAnimatedTexture(resource, tickLength, frameCount, filter, loop);
+    Resource ret = resource;
+    ret.setExtension("png");
+
+    Outrospection::get().textureManager.requestTexture({ret, filter, tickLength, frameCount, loop});
+    return ret;
 }
 
-SimpleTexture& simpleTexture(const Resource& resource, const GLint& filter)
+Resource simpleTexture(const Resource& resource, const GLint& filter)
 {
-    return Outrospection::get().textureManager.loadTexture(resource, filter);
+    Resource ret = resource;
+    ret.setExtension("png");
+
+    Outrospection::get().textureManager.requestTexture({ret, filter});
+    return ret;
 }
 
 bool Util::glError()

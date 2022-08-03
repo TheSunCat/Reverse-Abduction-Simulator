@@ -8,7 +8,7 @@ GUIBackground::GUIBackground() : GUILayer("Background", false),
                                 globe("globe", GL_NEAREST, UITransform(1100, 20, 880, 880))
 {
     globe.addAnimation("explode", animatedTexture({"ObjectData/", "explosion"}, 8, 8, GL_NEAREST));
-    globe.addAnimation("gone", TextureManager::None);
+    globe.addAnimation("gone", Resource());
 }
 
 GUIBackground::~GUIBackground()
