@@ -2,6 +2,8 @@
 
 #ifdef USE_GLFM
 static void onReady(GLFMDisplay *display, int width, int height) {
+    Util::Timer timer("Engine initialization timer");
+
     LOG("We're ready! Time to leak some memory >:)");
 
     Outrospection* o = new Outrospection(display);
@@ -95,7 +97,7 @@ int main(int argc, char** argv) {
     auto outrospection = Outrospection();
 
     // run the game!
-    outrospection.run();
+    Outrospection::get().run();
 
     return 0;
 #endif

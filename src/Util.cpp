@@ -702,7 +702,7 @@ Util::Timer::~Timer()
 {
     auto end = std::chrono::high_resolution_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
-    LOG_DEBUG("%s took %lld musec", name, dur.count());
+    LOG("%s took %lld musec", name, dur.count());
 }
 
 
