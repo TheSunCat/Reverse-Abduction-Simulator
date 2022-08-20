@@ -7,6 +7,10 @@
 
 #include <ext/matrix_clip_space.hpp>
 
+#ifdef PLATFORM_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #ifdef USE_GLFM
 #include "glfm.h"
 #else
@@ -116,7 +120,9 @@ Outrospection::~Outrospection()
 
 void Outrospection::stop()
 {
-#ifdef USE_GLFM
+#ifdef PLATFORM_EMSCRIPTEN
+    emscripten_run_script("window.open('','_parent','');window.close();");
+#elif defined(USE_GLFM)
     abort(); // TODO ugly but works, since GLFM is event-driven and provides no way to stop :/
 #else
     running = false;
