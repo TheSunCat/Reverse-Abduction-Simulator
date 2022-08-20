@@ -19,6 +19,10 @@
 #include <glad/glad.h>
 #endif
 
+#ifdef PLATFORM_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #include <common.hpp>
 #include <External/stb_image.h>
 #include <External/fast_float.h>
@@ -686,6 +690,9 @@ void Util::openLink(const std::string& link)
     jmethodID start_activity = env->GetMethodID(activity_class, "startActivity", "(Landroid/content/Intent;)V");
     env->CallVoidMethod(activity->clazz, start_activity, intent);
     //activity->vm->DetachCurrentThread();
+#elif defined(PLATFORM_EMSCRIPTEN)
+    std::string js = "window.open('" + link + "', '_blank');";
+    emscripten_run_script(js.c_str());
 #else
     std::string command = "xdg-open " + link;
     system(command.c_str());
