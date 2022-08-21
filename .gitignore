@@ -1,4 +1,3 @@
-build/
 *.kdev4
 save
 .vs/
@@ -6,7 +5,12 @@ _deps/
 CMakeFiles/
 
 # Android Studio
-android/.idea
+!build/android/*
+build/android/.idea
+
+
+build/emscripten/*
+!build/emscripten/shell_minimal.html
 
 # Visual Studio
 Outrospection.dir/
