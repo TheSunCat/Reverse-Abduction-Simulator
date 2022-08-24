@@ -20,12 +20,12 @@ android {
     }
 
     sourceSets.main {
-        assets.srcDirs = ["../../res"]
+        assets.srcDirs = ["../../../res"]
     }
 
     externalNativeBuild {
         cmake {
-            path "../../CMakeLists.txt"
+            path "../../../CMakeLists.txt"
         }
     }
 

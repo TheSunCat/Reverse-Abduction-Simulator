@@ -13,18 +13,6 @@ endif()
 message(CMAKE_SYSTEM_NAME="${CMAKE_SYSTEM_NAME}")
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
-# add vcpkg
-#include(FetchContent)
-#FetchContent_Declare(
-#    vcpkg
-#    GIT_REPOSITORY "https://github.com/microsoft/vcpkg.git"
-#    GIT_TAG "master"
-#)
-#if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-#    FetchContent_Populate(vcpkg)
-#    set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
-#endif()
-
 project("${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -112,6 +100,11 @@ if(EMSCRIPTEN)
     set_target_properties("${PROJECT_NAME}" PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res --shell-file ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in")
 
 elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+    # TODO find a better way to get this path...
+    file(READ ${CMAKE_CURRENT_BINARY_DIR}/../../../../../app/src/main/AndroidManifest.xml.pre FILE_CONTENTS)
+    string(REPLACE "OUTROSPECTION_PROJECT_NAME" "${PROJECT_NAME}" FILE_CONTENTS "${FILE_CONTENTS}")
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/../../../../../app/src/main/AndroidManifest.xml "${FILE_CONTENTS}")
+
     add_library("${PROJECT_NAME}" SHARED ${DIR_SRC})
 endif() # TODO iOS
 
