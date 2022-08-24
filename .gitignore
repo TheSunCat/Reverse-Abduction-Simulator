@@ -1,10 +1,18 @@
-build/
 *.kdev4
 save
 .vs/
 _deps/
 CMakeFiles/
 
+# Android Studio
+!build/android/*
+build/android/.idea
+
+
+build/emscripten/*
+!build/emscripten/shell_minimal.html
+
+# Visual Studio
 Outrospection.dir/
 vcpkg_installed/
 x64/
@@ -13,7 +21,7 @@ x64/
 *.vcxproj*
 *.filters
 *.log
-
 Debug/
+Release/
 
 Outrospection

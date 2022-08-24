@@ -7,12 +7,12 @@
 #include "GUICharacterMaker.h"
 #include "GUIPostGame.h"
 
-GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", TextureManager::None, UITransform(1370, 940, 100, 100)),
-                        m_bossIsBack("Boss is\nback in...", TextureManager::None, UITransform(1080, 900, 100, 100)),
+GUIStats::GUIStats() : GUILayer("Stats", false), m_timerDisplay("00:00", Resource(), UITransform(1370, 940, 100, 100)),
+                        m_bossIsBack("Boss is\nback in...", Resource(), UITransform(1080, 900, 100, 100)),
                         m_timerBlurTop("timerBlurTop", simpleTexture({"ObjectData/UI/", "timerTextBlurTop"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
-                        m_peopleCount("x 0", TextureManager::None, UITransform(1000, 680, 100, 100)),
+                        m_peopleCount("x 0", Resource(), UITransform(1000, 680, 100, 100)),
                         m_peopleIcon("peopleIcon", simpleTexture({"ObjectData/", "person"}, GL_LINEAR), UITransform(930, 680, 66, 80)),
-                        m_planetCount("x 1", TextureManager::None, UITransform(1030, 800, 100, 100)),
+                        m_planetCount("x 1", Resource(), UITransform(1030, 800, 100, 100)),
                         m_planetIcon("planetIcon", simpleTexture({"ObjectData/", "planet"}, GL_LINEAR), UITransform(930, 800, 100, 100)),
                         m_goal("person goal", simpleTexture({"ObjectData/", "goal50"}, GL_LINEAR), UITransform(700, 950, 333, 91))
 {

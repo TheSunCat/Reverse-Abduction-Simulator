@@ -1,20 +1,20 @@
 #include "UIHuman.h"
 
-UIHuman::UIHuman(const UITransform& transform) : UIComponent("Human base", TextureManager::None, transform)
+UIHuman::UIHuman(const UITransform& transform) : UIComponent("Human base", Resource(), transform)
 {
     m_deletionTimer.pause();
     m_obliterationTimer.pause();
 }
 
-void UIHuman::addToLayer(HumanLayer name, SimpleTexture* texture, bool bad)
+void UIHuman::addToLayer(HumanLayer name, const Resource& resource, bool bad)
 {
-    m_layers[int(name)].push_back(texture);
+    m_layers[int(name)].push_back(resource);
     m_layerBad[int(name)].push_back(bad);
 }
 
 void UIHuman::addToLayer(HumanLayer name, const std::string& textureName, bool bad)
 {
-    addToLayer(name, &simpleTexture({"CostumeData/", textureName}, GL_LINEAR), bad);
+    addToLayer(name, simpleTexture({"CostumeData/", textureName}, GL_LINEAR), bad);
 }
 
 void UIHuman::draw(Shader& shader, const Shader&) const
@@ -41,17 +41,17 @@ void UIHuman::draw(Shader& shader, const Shader&) const
 
         for(int i = 0; i < m_layers.size(); i++)
         {
-            SimpleTexture* layer = m_layers[i].operator[](m_curLayer[i]);
+            Resource layer = m_layers[i].operator[](m_curLayer[i]);
 
-            if(!layer)
+            if(layer.empty())
                 continue;
 
-            layer->bind();
+            Outrospection::get().textureManager.get(layer).bind();
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
     } else {
-        animations.at(curAnimation)->bind();
+        Outrospection::get().textureManager.get(animations.at(curAnimation)).bind();
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
@@ -109,7 +109,7 @@ void UIHuman::rollTheDice()
         for(int k = 0; k < m_layers[i].size(); k++) {
             int r = k + rand() % (m_layers[i].size() - k);
 
-            SimpleTexture* temp = m_layers[i][k];
+            Resource temp = m_layers[i][k];
             m_layers[i][k] = m_layers[i][r];
             m_layers[i][r] = temp;
 

@@ -1,26 +1,31 @@
 cmake_minimum_required(VERSION 3.18)
 
+# Change project name here
+set(PROJECT_NAME "revabdsim")
+
+set(CMAKE_CXX_FLAGS_DEBUG  "-g")
+
 if(EMSCRIPTEN OR CMAKE_SYSTEM_NAME MATCHES "Android")
     set(GLFM "1")
     message("Setting GLFM to true...")
 endif()
 
 message(CMAKE_SYSTEM_NAME="${CMAKE_SYSTEM_NAME}")
-message(EMSCRIPTEN="${EMSCRIPTEN}")
+#set(CMAKE_VERBOSE_MAKEFILE on)
 
 # add vcpkg
-include(FetchContent)
-FetchContent_Declare(
-    vcpkg
-    GIT_REPOSITORY "https://github.com/microsoft/vcpkg.git"
-    GIT_TAG "master"
-)
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    FetchContent_Populate(vcpkg)
-    set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
-endif()
+#include(FetchContent)
+#FetchContent_Declare(
+#    vcpkg
+#    GIT_REPOSITORY "https://github.com/microsoft/vcpkg.git"
+#    GIT_TAG "master"
+#)
+#if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+#    FetchContent_Populate(vcpkg)
+#    set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
+#endif()
 
-project(Outrospection)
+project("${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -29,8 +34,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
 else()
     message("Finding packages for desktop...")
 
-    find_package(freetype CONFIG REQUIRED)
-    #find_package(OpenGL REQUIRED)
+    add_subdirectory(lib/freetype)
 endif()
 
 # include
@@ -66,24 +70,8 @@ add_subdirectory(lib/soloud/contrib)
 
 add_subdirectory(lib/glm)
 
-
 # executable
 file(GLOB_RECURSE DIR_SRC src/*.cpp)
-
-if(GLFM)
-    add_executable(Outrospection ${DIR_SRC})
-
-    set(PLATFORM_DEPS "glfm")
-    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "")
-else()
-    set(CMAKE_EXE_LINKER_FLAGS) # -static
-    add_executable(Outrospection ${DIR_SRC})
-    
-    set(PLATFORM_DEPS "glfw")
-    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "glad")
-endif()
-
-set_target_properties(Outrospection PROPERTIES COMPILE_FLAGS -Wno-format-security)
 
 if(EMSCRIPTEN)
     SET(CMAKE_EXECUTABLE_SUFFIX ".html")
@@ -119,23 +107,49 @@ if(EMSCRIPTEN)
     endif()
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in "${EMSCRIPTEN_SHELL_HTML}")
 
-    set_target_properties(Outrospection PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res --shell-file ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in")
+    add_executable("${PROJECT_NAME}" ${DIR_SRC})
+
+    set_target_properties("${PROJECT_NAME}" PROPERTIES LINK_FLAGS "-s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -s FULL_ES2=1 -s ASSERTIONS -s GL_ASSERTIONS -s GL_DEBUG -s DEMANGLE_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -s ALLOW_MEMORY_GROWTH -s EXIT_RUNTIME=1 --preload-file res@res --shell-file ${CMAKE_CURRENT_BINARY_DIR}/shell.html.in")
+
+elseif(CMAKE_SYSTEM_NAME MATCHES "Android")
+    add_library("${PROJECT_NAME}" SHARED ${DIR_SRC})
+endif() # TODO iOS
+
+if(GLFM)
+    set(PLATFORM_DEPS "glfm")
+
+    if(CMAKE_SYSTEM_NAME MATCHES "Android")
+        set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "GLESv3")
+        set(PLATFORM_DEPS_3_ELECTRIC_BOOGALOO "log")
+    endif()
+
+else()
+    set(CMAKE_EXE_LINKER_FLAGS) # -static
+    add_executable("${PROJECT_NAME}" ${DIR_SRC})
+
+    set(PLATFORM_DEPS "glfw")
+    set(PLATFORM_DEPS_2_ELECTRIC_BOOGALOO "glad")
 endif()
 
+set_target_properties("${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS "-fPIC -Wno-format-security")
+
 # symlink res folder
-add_custom_command(TARGET Outrospection PRE_BUILD
+add_custom_command(TARGET "${PROJECT_NAME}" PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E create_symlink
                    ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
 
+find_library(GLESv3-lib GLESv3)
 
 # for some reason this fails if I don't put GLFW and GLAD in separate lines. WHAT.
-target_link_libraries(Outrospection
+target_link_libraries("${PROJECT_NAME}"
+
     PRIVATE
     freetype soloud
     
     PUBLIC
     ${PLATFORM_DEPS}
     ${PLATFORM_DEPS_2_ELECTRIC_BOOGALOO}
+    ${PLATFORM_DEPS_3_ELECTRIC_BOOGALOO}
     
     PRIVATE
     ${CMAKE_DL_LIBS}

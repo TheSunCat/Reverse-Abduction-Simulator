@@ -19,8 +19,8 @@ std::string operator+(const std::string& str, int i);
 std::string operator+(int i, const std::string& str);
 
 // proxy functions that are shorter than the usual huge call
-SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop = true);
-SimpleTexture& simpleTexture(const Resource& resource, const GLint& filter);
+Resource animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop = true);
+Resource simpleTexture(const Resource& resource, const GLint& filter);
 
 namespace Util
 {
@@ -142,16 +142,10 @@ namespace Util
     
     std::string path(const std::string& relPath);
 
-    bool fileExists(const std::string& file);
-    std::vector<std::string> listFiles(const std::string& dir);
-    std::string readAllBytes(const std::string& file);
-
     glm::vec3 rotToVec3(float yaw, float pitch = 0);
 
     std::string vecToStr(const glm::vec3& vec);
     std::string vecToStr(const glm::vec2& vec);
-
-    unsigned char* imageDataFromFile(const char* path, const std::string& directory, int* widthOut, int* heightOut);
 
     Collision rayCast(
         const Ray& ray,

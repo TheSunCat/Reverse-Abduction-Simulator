@@ -6,7 +6,7 @@
 
 GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
                     m_backgroundFade("fade", simpleTexture({"ObjectData/UI/", "fadeColor"}, GL_NEAREST), UITransform(0, 0, 1920, 1080)),
-                    m_planetDown("Planet counter", TextureManager::None, UITransform(0, 0, 1920, 1080)),
+                    m_planetDown("Planet counter", Resource(), UITransform(0, 0, 1920, 1080)),
                     m_creditsSequence("Credits sequence", simpleTexture({"ObjectData/UI/", "credits"}, GL_NEAREST), UITransform(0, 0, 1920, 1080)),
                     m_starrySky("Starry sky (end)", animatedTexture({"ObjectData/UI/", "starrySky"}, 4, 2, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                     m_ufo("End UFO", simpleTexture({"ObjectData/end/", "ufo"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
@@ -14,7 +14,7 @@ GUIPostGame::GUIPostGame() : GUILayer("Postgame GUI", false),
                     m_ufoText("End UFO text", simpleTexture({"ObjectData/end/", "ellipsis"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                     m_bossText("End Boss text", simpleTexture({"ObjectData/end/", "whatDidIMiss"}, GL_LINEAR), UITransform(0, 0, 1920, 1080)),
                     m_human("human", simpleTexture({"ObjectData/", "purplePerson"}, GL_LINEAR), UITransform(1400, 800, 99, 120)),
-                    m_scoreValueText("End score value", TextureManager::None, UITransform(1500, 830, 100, 100))
+                    m_scoreValueText("End score value", Resource(), UITransform(1500, 830, 100, 100))
 
 {
     m_backgroundFade.animationSpeed = 0.1;
@@ -230,11 +230,11 @@ void GUIPostGame::start(bool goodEnding)
         m_backgroundFade.moveLinearly = true;
         m_backgroundFade.setGoal(0, 2000);
 
-        buttons.push_back(new UIButton("octopuzzlerURL", TextureManager::None, UITransform(960, 350, 900, 100), Bounds(), [](UIButton&, int){
+        buttons.push_back(new UIButton("octopuzzlerURL", Resource(), UITransform(960, 350, 900, 100), Bounds(), [](UIButton&, int){
             Util::openLink("https://2foamboards.itch.io/octopuzzler");
         }));
 
-        buttons.push_back(new UIButton("gitURL", TextureManager::None, UITransform(560, 500, 1300, 100), Bounds(), [](UIButton&, int){
+        buttons.push_back(new UIButton("gitURL", Resource(), UITransform(560, 500, 1300, 100), Bounds(), [](UIButton&, int){
             Util::openLink("https://github.com/RealTheSunCat/Reverse-Abduction-Simulator");
         }));
 

@@ -7,6 +7,10 @@
 
 #include <ext/matrix_clip_space.hpp>
 
+#ifdef PLATFORM_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #ifdef USE_GLFM
 #include "glfm.h"
 #else
@@ -39,11 +43,14 @@ Outrospection::Outrospection()
 {
     instance = this;
 
-    // seed rand()
-    srand(time(NULL));
+    LOG("Initializing engine...");
 
-    // TODO emscripten loggerThread.start();
-    // TODO consoleThread.start();
+    // seed rand()
+    srand(time(nullptr));
+
+    // TODO emscripten doesn't like this
+    // loggerThread.start();
+    // consoleThread.start();
     audioManager.init({
          "pageTurn0", "pageTurn1", "pageTurn2", "pageTurn3", "pageTurn4", "explode", "explodeFinal", "end",
          "newsongfornewgame", "noo0", "noo1", "noo2", "noo3", "timesUp", "reverseAbduction", "planetDown"
@@ -55,9 +62,7 @@ Outrospection::Outrospection()
     gameWindow = opengl.gameWindow;
 #endif
 
-    crtVAO = opengl.crtVAO;
     framebuffers.insert(std::make_pair("default", Framebuffer()));
-    framebuffers.insert(std::make_pair("crt", opengl.framebuffer));
 
     fontCharacters = freetype.loadedCharacters;
 
@@ -76,6 +81,10 @@ Outrospection::Outrospection()
     layerPtrs["stats"] = new GUIStats();
     layerPtrs["people"] = new GUIPeople();
     layerPtrs["postGame"] = new GUIPostGame();
+
+    textureManager.loadWantedTextures();
+
+    LOG("Finished initializing engine!");
 
     pushOverlay(layerPtrs["tutorial"]);
 
@@ -111,7 +120,13 @@ Outrospection::~Outrospection()
 
 void Outrospection::stop()
 {
+#ifdef PLATFORM_EMSCRIPTEN
+    emscripten_run_script("window.open('','_parent','');window.close();");
+#elif defined(USE_GLFM)
+    abort(); // TODO ugly but works, since GLFM is event-driven and provides no way to stop :/
+#else
     running = false;
+#endif
 }
 
 void Outrospection::run()
@@ -121,19 +136,16 @@ void Outrospection::run()
     running = true;
 
     lastFrame = Util::currentTimeMillis(); // I miss java
-    deltaTime = 1.0f / 60.0f; 
+    deltaTime = 1.0f / 60.0f;
+
+    // GLFM calls this by itself
+#ifndef USE_GLFM
     while (running)
     {
-        //currentTimeMillis = Util::currentTimeMillis();
-        //deltaTime = float(currentTimeMillis - lastFrame) / 1000.0f;
-        //lastFrame = currentTimeMillis;
-
         runGameLoop();
 
-#ifndef USE_GLFM
         if (glfwWindowShouldClose(gameWindow))
             running = false;
-#endif
 
         currentTimeMillis = Util::currentTimeMillis();
         time_t frameTime = currentTimeMillis - lastFrame;
@@ -146,6 +158,7 @@ void Outrospection::run()
             std::this_thread::sleep_for(m);
         }
     }
+#endif
 }
 
 void Outrospection::onEvent(Event& e)
@@ -292,9 +305,9 @@ void Outrospection::runGameLoop()
         framebuffers["default"].bind();
         glClear(GL_COLOR_BUFFER_BIT);
         
-        glBindVertexArray(crtVAO);
-        framebuffers["crt"].bindTexture();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glBindVertexArray(crtVAO);
+        //framebuffers["crt"].bindTexture();
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         shaders["screen"].use();
         // draw UI
@@ -376,6 +389,7 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
 
     switch (phase)
     {
+    case GLFMTouchPhaseMoved:
     case GLFMTouchPhaseHover:
     {
         return false;
@@ -386,10 +400,15 @@ bool Outrospection::onTouch(GLFMDisplay* display, int touch, GLFMTouchPhase phas
         Outrospection::get().onEvent(event);
         return true;
     }
+    case GLFMTouchPhaseCancelled:
     case GLFMTouchPhaseEnded:
     {
         MouseButtonReleasedEvent event(0);
         Outrospection::get().onEvent(event);
+
+        // move the "mouse" out of the way so buttons unhover
+        MouseMovedEvent event2(-9999, -9999);
+        Outrospection::get().onEvent(event2);
         return true;
     }
     }
@@ -501,35 +520,34 @@ void Outrospection::createShaders()
 void Outrospection::createCursors()
 {
     GLFWimage cursorImage;
-    int width = 10, height = 10;
 
-    unsigned char* data = TextureManager::readImageBytes("ObjectData/Textures/mouse.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
+    TextureManager::Image image = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse", "png"});
+    cursorImage.pixels = image.bytes; cursorImage.width = image.width; cursorImage.height = image.height;
     cursors["default"] = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
+    TextureManager::free(image.bytes);
 
-    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_hover.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
+    image = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse_hover", "png"});
+    cursorImage.pixels = image.bytes; cursorImage.width = image.width; cursorImage.height = image.height;
     cursors["hovering"] = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
+    TextureManager::free(image.bytes);
 
-    data = TextureManager::readImageBytes("ObjectData/Textures/mouse_click.png", width, height);
-    cursorImage.pixels = data; cursorImage.width = width; cursorImage.height = height;
+    image = TextureManager::readImageBytes({"ObjectData/Textures/", "mouse_click", "png"});
+    cursorImage.pixels = image.bytes; cursorImage.width = image.width; cursorImage.height = image.height;
     cursors["clicking"] = glfwCreateCursor(&cursorImage, 0, 0);
-    TextureManager::free(data);
+    TextureManager::free(image.bytes);
 }
 
 void Outrospection::createIcon() const
 {
     GLFWimage image;
-    int width = 10, height = 10;
+    int width = 10, height = 10, nrComponents = 4;
 
-    unsigned char* data = TextureManager::readImageBytes("ObjectData/icon.png", width, height);
-    image.pixels = data; image.width = width; image.height = height;
+    TextureManager::Image img = TextureManager::readImageBytes({"ObjectData/", "icon", "png"});
+    image.pixels = img.bytes; image.width = img.width; image.height = img.height;
 
     glfwSetWindowIcon(gameWindow, 1, &image);
 
-    TextureManager::free(data);
+    TextureManager::free(img.bytes);
 }
 #endif
 
@@ -547,7 +565,7 @@ void Outrospection::updateResolution(int x, int y)
 
 glm::vec2 Outrospection::getWindowResolution() const
 {
-    return glm::vec2(curWindowResolution);
+    return { curWindowResolution };
 }
 
 void Outrospection::setWindowText(const std::string& text) const
@@ -637,7 +655,7 @@ void Outrospection::updateInput()
 {
     
 }
-
+/* TODO
 int Outrospection::loadSave()
 {
 #ifdef _DEBUG // don't load save data on Debug mode
@@ -676,3 +694,4 @@ void Outrospection::writeSave(int number)
     saveFile << "OSAV" << number;
     saveFile.close();
 }
+*/

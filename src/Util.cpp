@@ -19,6 +19,10 @@
 #include <glad/glad.h>
 #endif
 
+#ifdef PLATFORM_EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #include <common.hpp>
 #include <External/stb_image.h>
 #include <External/fast_float.h>
@@ -72,14 +76,22 @@ std::string operator+(int i, const std::string& str)
     return std::to_string(i) + str;
 }
 
-SimpleTexture& animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop)
+Resource animatedTexture(const Resource& resource, int tickLength, int frameCount, const GLint& filter, bool loop)
 {
-    return Outrospection::get().textureManager.loadAnimatedTexture(resource, tickLength, frameCount, filter, loop);
+    Resource ret = resource;
+    ret.setExtension("png");
+
+    Outrospection::get().textureManager.requestTexture({ret, filter, tickLength, frameCount, loop});
+    return ret;
 }
 
-SimpleTexture& simpleTexture(const Resource& resource, const GLint& filter)
+Resource simpleTexture(const Resource& resource, const GLint& filter)
 {
-    return Outrospection::get().textureManager.loadTexture(resource, filter);
+    Resource ret = resource;
+    ret.setExtension("png");
+
+    Outrospection::get().textureManager.requestTexture({ret, filter});
+    return ret;
 }
 
 bool Util::glError()
@@ -131,102 +143,16 @@ void Util::doLater(std::function<void()> func, time_t waitTime)
 
 std::string Util::path(const std::string& relPath)
 {
-#ifdef USE_GLFM
-    return "res/" + relPath;
+#ifdef PLATFORM_ANDROID
+    //char fullPath[PATH_MAX];
+    //fc_resdir(fullPath, sizeof(fullPath));
+    //strncat(fullPath, relPath.c_str(), sizeof(fullPath) - strlen(fullPath) - 1);
+
+    //return std::string(fullPath);
+    return relPath;
 #else
     return "res/" + relPath;
 #endif
-}
-
-bool Util::fileExists(const std::string& file)
-{
-    std::string fullPath = Util::path(file);
-
-    std::cout << "Checking file " << fullPath << std::endl;
-
-#ifndef PLATFORM_XP
-    return std::filesystem::exists(fullPath);
-#else
-    return PathFileExistsA(fullPath.c_str());
-#endif
-}
-
-std::vector<std::string> Util::listFiles(const std::string& dir)
-{
-    std::string fullDir = Util::path(dir);
-
-    std::vector<std::string> ret;
-
-#ifndef PLATFORM_XP
-    for (const auto& entry : std::filesystem::directory_iterator(fullDir)) {
-        auto str = entry.path().string();
-        std::replace(str.begin(), str.end(), '\\', '/');
-
-        ret.emplace_back(str);
-    }
-#else
-
-    WIN32_FIND_DATA ffd;
-    LARGE_INTEGER filesize;
-    TCHAR szDir[MAX_PATH];
-    HANDLE hFind = INVALID_HANDLE_VALUE;
-    DWORD dwError = 0;
-
-    // Prepare string for use with FindFile functions.  First, copy the
-    // string to a buffer, then append '\*' to the directory name.
-    StringCchCopy(szDir, MAX_PATH, fullDir.c_str());
-    StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
-
-    // Find the first file in the directory.
-    hFind = FindFirstFile(szDir, &ffd);
-
-    if (INVALID_HANDLE_VALUE == hFind)
-    {
-        LOG_ERROR("FindFirstFile");
-        return ret;
-    }
-
-    do
-    {
-        if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        {
-            ret.emplace_back(ffd.cFileName);
-        }
-    } while (FindNextFile(hFind, &ffd) != 0);
-#endif
-
-    return ret;
-}
-
-std::string Util::readAllBytes(const std::string& file)
-{
-    std::string fullPath = Util::path(file);
-    
-    std::ifstream fileStream;
-
-    // ensure ifstream objects can throw exceptions
-    fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-    try
-    {
-        // open file
-        fileStream.open(fullPath);
-        std::stringstream fileString;
-
-        // read file's buffer contents into streams
-        fileString << fileStream.rdbuf();
-
-        // close file handlers
-        fileStream.close();
-
-        // convert stream into string
-        return fileString.str();
-    }
-    catch (std::ifstream::failure& e)
-    {
-        LOG_ERROR("Failed to read file \"%s\"! errno %s", fullPath, e.what());
-        return "ERROR: NO FILE";
-    }
 }
 
 glm::vec3 Util::rotToVec3(const float yaw, const float pitch)
@@ -246,26 +172,6 @@ std::string Util::vecToStr(const glm::vec3& vec)
 std::string Util::vecToStr(const glm::vec2& vec)
 {
     return std::to_string(vec.x) + ", " + std::to_string(vec.y);
-}
-
-unsigned char* Util::imageDataFromFile(const char* path, const std::string& directory, int* widthOut, int* heightOut)
-{
-    std::string filename = std::string(path);
-    filename = Util::path(directory + '/' + filename);
-
-    int nrComponents = 0;
-    unsigned char* data = stbi_load(filename.c_str(), widthOut, heightOut, &nrComponents, 0);
-    if (data)
-    {
-        stbi_image_free(data);
-    }
-    else
-    {
-        LOG_ERROR("Texture data failed to load at path: %s", filename);
-        stbi_image_free(data);
-    }
-
-    return data;
 }
 
 // partly based on https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
@@ -761,8 +667,32 @@ int Util::stoi(const std::string_view& str)
 
 void Util::openLink(const std::string& link)
 {
+    LOG("Opening URL %s...", link);
+
 #ifdef PLATFORM_WINDOWS
     ShellExecute(0, 0, link.c_str(), 0, 0, SW_SHOW);
+#elif defined(PLATFORM_ANDROID)
+    ANativeActivity* activity = glfmAndroidGetActivity();
+
+    JNIEnv* env;
+    activity->vm->AttachCurrentThread(&env, nullptr);
+    jstring url_string = env->NewStringUTF(link.c_str());
+    jclass uri_class = env->FindClass("android/net/Uri");
+    jmethodID uri_parse = env->GetStaticMethodID(uri_class, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
+    jobject uri = env->CallStaticObjectMethod(uri_class, uri_parse, url_string);
+    jclass intent_class = env->FindClass("android/content/Intent");
+    jfieldID action_view_id = env->GetStaticFieldID(intent_class, "ACTION_VIEW", "Ljava/lang/String;");
+    jobject action_view = env->GetStaticObjectField(intent_class, action_view_id);
+    jmethodID new_intent = env->GetMethodID(intent_class, "<init>", "(Ljava/lang/String;Landroid/net/Uri;)V");
+    jobject intent = env->AllocObject(intent_class);
+    env->CallVoidMethod(intent, new_intent, action_view, uri);
+    jclass activity_class = env->FindClass("android/app/Activity");
+    jmethodID start_activity = env->GetMethodID(activity_class, "startActivity", "(Landroid/content/Intent;)V");
+    env->CallVoidMethod(activity->clazz, start_activity, intent);
+    //activity->vm->DetachCurrentThread();
+#elif defined(PLATFORM_EMSCRIPTEN)
+    std::string js = "window.open('" + link + "', '_blank');";
+    emscripten_run_script(js.c_str());
 #else
     std::string command = "xdg-open " + link;
     system(command.c_str());
@@ -779,7 +709,7 @@ Util::Timer::~Timer()
 {
     auto end = std::chrono::high_resolution_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
-    LOG_DEBUG("%s took %lld musec", name, dur.count());
+    LOG("%s took %lld musec", name, dur.count());
 }
 
 

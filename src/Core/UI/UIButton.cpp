@@ -16,9 +16,9 @@ UIButton::UIButton(const std::string& _texName, const GLint& texFilter, const UI
     }
 }
 
-UIButton::UIButton(const std::string& _name, SimpleTexture& tex, const UITransform& _transform,
+UIButton::UIButton(const std::string& _name, const Resource& res, const UITransform& _transform,
                    Bounds bounds, ButtonCallback clickCallback)
-    : UIComponent(_name, tex, _transform),
+    : UIComponent(_name, res, _transform),
       onClick(std::move(clickCallback)),
       buttonBounds(bounds)
 {

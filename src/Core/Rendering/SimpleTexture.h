@@ -12,7 +12,6 @@ class SimpleTexture
 {
 public:
     SimpleTexture() = default;
-
     SimpleTexture(const GLuint& _texId);
 
     void bind() const;

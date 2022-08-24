@@ -58,7 +58,13 @@ inline void win_change_attributes(const int foreground)
 
 #define CHANGE_COLOR(col) win_change_attributes((col) == 0 ? -1 : (col));
 #else
-#define CHANGE_COLOR(col) printf("\033[%im", (col))
+
+    #ifdef PLATFORM_LINUX
+        #define CHANGE_COLOR(col) printf("\033[%im", (col))
+    #else
+        #define CHANGE_COLOR(col) /* unsupported :/ */
+    #endif
+
 #endif
 
 #include <condition_variable>
@@ -154,7 +160,16 @@ inline auto thread_safe_time(const std::time_t& time) {
     localtime_r(&time, localtime_ret);
 #endif
     return localtime_ret;
-};
+}
+
+#ifdef PLATFORM_ANDROID
+#include <android/log.h>
+
+#ifndef LOG_TAG
+    #define LOG_TAG "logtest"
+    #define slogd(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#endif
+#endif
 
 struct smart_printf {
     template <typename ...Ts>
@@ -168,13 +183,19 @@ struct smart_printf {
             std::cerr << "Failed to retrieve date/time.\n";
             return;
         }
-
+#ifdef PLATFORM_ANDROID
+        slogd("%s", time_buf);
+        slogd(printf_transform(args)...);
+        slogd("\n");
+#else
         std::cout << time_buf;
         printf(printf_transform(args)...);
+        putchar('\n');
+#endif
     }
 };
 
-#define LOG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { */std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__)); putchar('\n')/* })*/
+#define LOG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { */std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__))/* })*/
 
 #ifdef _DEBUG 
 #define LOG_DEBUG(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] {*/ CHANGE_COLOR(35); /* set color to magenta */\
@@ -188,13 +209,13 @@ struct smart_printf {
 #define PROFILE
 #endif
 
-#define LOG_ERROR(...) loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { CHANGE_COLOR(4); /* red error color */\
-        std::apply(smart_printf{}, args); \
-        CHANGE_COLOR(0);})
+#define LOG_ERROR(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] {*/ CHANGE_COLOR(4); /* red error color */\
+        std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__)); \
+        CHANGE_COLOR(0)/*;})*/
 
-#define LOG_INFO(...) loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] { CHANGE_COLOR(34); /* green info color */\
-        std::apply(smart_printf{}, args); \
-        CHANGE_COLOR(0);})
+#define LOG_INFO(...) /*loggerQueue.push([args=std::make_tuple(__VA_ARGS__)] {*/ CHANGE_COLOR(34); /* green info color */\
+        std::apply(smart_printf{}, std::make_tuple(__VA_ARGS__)); \
+        CHANGE_COLOR(0)/*;})*/
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
     TypeName(const TypeName&) = delete;   \

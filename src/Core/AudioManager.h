@@ -7,6 +7,10 @@
 #include <thread>
 #include <vector>
 
+#ifndef PLATFORM_EMSCRIPTEN
+#include <future>
+#endif
+
 #include <soloud.h>
 #include <soloud_wav.h>
 
@@ -16,10 +20,13 @@ class AudioManager
 {
 private:
     SoLoud::Soloud engine;
+
+#ifndef PLATFORM_EMSCRIPTEN
+    std::vector<std::future<void>> m_futureWaves;
+#endif
+
     std::unordered_map<std::string, std::unique_ptr<SoLoud::Wav>> waves;
     std::unordered_map<std::string, SoLoud::handle> handles;
-
-    void loadSound(const std::string& soundName);
 public:
     AudioManager() = default;
     ~AudioManager();

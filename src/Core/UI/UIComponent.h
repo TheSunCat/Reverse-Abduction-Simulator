@@ -47,13 +47,13 @@ class UIComponent
 {
 public:
     UIComponent(const std::string& _texName, const GLint& texFilter, const UITransform& transform);
-    UIComponent(std::string _name, SimpleTexture& _tex, const UITransform& transform);
+    UIComponent(std::string _name, const Resource& _tex, const UITransform& transform);
 
     virtual void draw(Shader& shader = Outrospection::get().shaders["sprite"], const Shader& glyphShader = Outrospection::get().shaders["glyph"]) const;
 
     virtual void tick();
 
-    void addAnimation(const std::string& anim, SimpleTexture& _tex);
+    void addAnimation(const std::string& anim, const Resource& _res);
     void setAnimation(const std::string& anim);
 
     void setPosition(int x, int y);
@@ -89,7 +89,7 @@ protected:
     virtual void drawText(const std::string& text, const Shader& glyphShader) const;
 
     std::string curAnimation = "default";
-    std::unordered_map<std::string, SimpleTexture*> animations;
+    std::unordered_map<std::string, Resource> animations;
 
     glm::vec2 m_goal = glm::vec2(0);
 
