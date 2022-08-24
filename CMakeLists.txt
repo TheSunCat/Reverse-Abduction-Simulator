@@ -14,16 +14,16 @@ message(CMAKE_SYSTEM_NAME="${CMAKE_SYSTEM_NAME}")
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
 # add vcpkg
-include(FetchContent)
-FetchContent_Declare(
-    vcpkg
-    GIT_REPOSITORY "https://github.com/microsoft/vcpkg.git"
-    GIT_TAG "master"
-)
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    FetchContent_Populate(vcpkg)
-    set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
-endif()
+#include(FetchContent)
+#FetchContent_Declare(
+#    vcpkg
+#    GIT_REPOSITORY "https://github.com/microsoft/vcpkg.git"
+#    GIT_TAG "master"
+#)
+#if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+#    FetchContent_Populate(vcpkg)
+#    set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
+#endif()
 
 project("${PROJECT_NAME}")
 
